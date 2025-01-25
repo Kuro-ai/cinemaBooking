@@ -2,7 +2,7 @@
     <h2 class="font-semibold text-xl mb-4 text-gray-800 dark:text-gray-100">Manage Cinemas</h2>
     <div class="mb-4">
         <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <input 
                     type="text" 
                     wire:model.defer="name" 
@@ -35,39 +35,41 @@
                     placeholder="Email" 
                     class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md"
                 >
-                <label class="flex items-center space-x-2">
-                    <input 
-                        type="checkbox" 
-                        wire:model.defer="is_active" 
-                        class="form-checkbox text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600"
-                    > 
-                    <span>Active</span>
-                </label>
-                <input 
-                    type="file" 
-                    wire:model="image" 
-                    class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md"
-                >
-                @error('image') <span class="text-red-500">{{ $message }}</span> @enderror
-
-                <div class="col-span-2 mt-4">
-                    @if ($image)
-                        <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
-                        <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-32 h-32 rounded-md border border-gray-300 dark:border-gray-600">
-                    @endif
+                <div>
+                    <input type="file" 
+                           wire:model="image" 
+                           id="image"
+                           class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md">
+                    @error('image') 
+                        <span class="text-red-500">{{ $message }}</span> 
+                    @enderror
                 </div>
+                    
             </div>
-            <button 
-                type="submit" 
-                class="mt-4 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-400"
-            >
-                {{ $isEditing ? 'Update' : 'Create' }}
+            <div class="mt-4 mb-4">
+                @if ($image)
+                    <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
+                    <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+                @elseif ($isEditing && $imagePath)
+                    <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
+                    <img src="{{ asset('storage/' . $imagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+                @endif
+            </div>
+            <div class="flex items-center space-x-2 mb-3">
+                <input type="checkbox" 
+                       wire:model.defer="is_active" 
+                       class="form-checkbox text-indigo-600 dark:text-indigo-400 dark:bg-gray-700 rounded">
+                <span class="dark:text-gray-200">Active</span>
+            </div>
+
+           <button type="submit" 
+                class=" bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white px-4 py-2 rounded-lg mt-3">
+            {{ $isEditing ? 'Update' : 'Create' }}
             </button>
         </form>
-        
     </div>
 
-    <table class="table-auto w-full text-gray-800 dark:text-gray-200 border-collapse">
+    <table class="table-auto w-full text-center text-gray-800 dark:text-gray-200 border-collapse">
         <thead class="bg-gray-300 dark:bg-gray-700">
             <tr>
                 <th class="border border-gray-400 dark:border-gray-600 px-4 py-2">Image</th>
@@ -97,12 +99,44 @@
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->email }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->is_active ? 'Active' : 'Inactive' }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
-                        <button wire:click="edit({{ $cinema->id }})" class="btn btn-secondary">Edit</button>
-                        <button wire:click="delete({{ $cinema->id }})" class="btn btn-danger">Delete</button>
+                        <button wire:click="edit({{ $cinema->id }})" class="px-2 py-1 bg-yellow-500 text-white rounded">Edit</button>
+                        <button wire:click="confirmDelete({{ $cinema->id }})" class="bg-red-500 dark:bg-red-400 hover:bg-red-600 dark:hover:bg-red-500 text-white px-4 py-1 rounded-lg">Delete</button>
                     </td>
                 </tr>
             @endforeach
         </tbody>
-        
     </table>
+    @if ($showModal)
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-lg font-semibold mb-4">Confirm Delete</h3>
+            <p class="text-sm mb-4">Type <strong>"Delete Confirm"</strong> to confirm the deletion.</p>
+            <input 
+                type="text" 
+                wire:model.defer="confirmDeleteInput" 
+                placeholder="Delete Confirm" 
+                class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-lg px-4 py-2 w-full"
+            >
+            @error('confirmDeleteInput')
+                <span class="text-red-500">{{ $message }}</span>
+            @enderror
+            <div class="flex justify-end space-x-4 mt-4">
+                <button 
+                    wire:click="closeModal" 
+                    class="dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+                >
+                    Cancel
+                </button>
+                <button 
+                    wire:click="delete" 
+                    class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                >
+                    Confirm
+                </button>
+            </div>
+        </div>
+        </div>
+    @endif
+
 </div>
+

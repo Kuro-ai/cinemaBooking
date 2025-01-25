@@ -1,94 +1,115 @@
-<div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Manage Schedules</h2>
-
-    @if (session()->has('success'))
-        <div class="mb-4 p-4 text-sm text-green-800 bg-green-100 rounded-lg dark:bg-green-900 dark:text-green-300">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}" class="space-y-4">
-        <div>
-            <label for="movie_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Movie</label>
-            <select wire:model="movie_id" id="movie_id" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+<div class="p-6 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-md">
+    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mb-6">Manage Schedules</h2>
+    <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Schedule Fields -->
+            <select wire:model.defer="movie_id" 
+                    class="form-select bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
                 <option value="">Select a movie</option>
                 @foreach ($movies as $movie)
                     <option value="{{ $movie->id }}">{{ $movie->title }}</option>
                 @endforeach
             </select>
-        </div>
 
-        <div>
-            <label for="theatre_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Theatre</label>
-            <select wire:model="theatre_id" id="theatre_id" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <select wire:model.defer="theatre_id" 
+                    class="form-select bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
                 <option value="">Select a theatre</option>
                 @foreach ($theatres as $theatre)
                     <option value="{{ $theatre->id }}">{{ $theatre->name }}</option>
                 @endforeach
             </select>
+
+            <input type="date" 
+                   wire:model.defer="date" 
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
+
+            <input type="time" 
+                   wire:model.defer="start_time" 
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
+
+            <input type="time" 
+                   wire:model.defer="end_time" 
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
         </div>
 
         <div>
-            <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
-            <input type="date" wire:model="date" id="date" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" 
+                       wire:model.defer="is_active" 
+                       class="form-checkbox text-indigo-600 dark:text-indigo-400 rounded">
+                <span>Active</span>
+            </label>
         </div>
 
-        <div>
-            <label for="start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Time</label>
-            <input type="time" wire:model="start_time" id="start_time" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-        </div>
-
-        <div>
-            <label for="end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Time</label>
-            <input type="time" wire:model="end_time" id="end_time" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-        </div>
-
-        <div class="flex items-center">
-            <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Is Active</label>
-            <input type="checkbox" wire:model="is_active" id="is_active" class="rounded text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600 focus:ring-blue-500">
-        </div>
-
-        <button type="submit" class="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-md shadow-sm">
-            {{ $isEditing ? 'Update' : 'Create' }} Schedule
+        <button type="submit" 
+                class="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white px-4 py-2 rounded-lg">
+            {{ $isEditing ? 'Update' : 'Create' }}
         </button>
     </form>
 
-    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-8 mb-4">Schedules</h3>
-    <div class="overflow-x-auto">
-        <table class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
-            <thead>
-                <tr class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">Movie</th>
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">Theatre</th>
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">Date</th>
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">Start Time</th>
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">End Time</th>
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center">Is Active</th>
-                    <th class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center">Actions</th>
+    <!-- Schedules Table -->
+    <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
+        <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            <tr>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Movie</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Theatre</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Date</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Start Time</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">End Time</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Is Active</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-center text-gray-800 dark:text-gray-200">
+            @foreach ($schedules as $schedule)
+                <tr class="border-t dark:border-gray-600 dark:hover:bg-gray-800">
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->movie->title }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->theatre->name }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->date }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->start_time }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->end_time }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
+                        @if ($schedule->is_active)
+                            <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>
+                        @else
+                            <span class="text-red-600 dark:text-red-400 font-semibold">Inactive</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
+                        <button wire:click="edit({{ $schedule->id }})" 
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-lg">
+                            Edit
+                        </button>
+                        <button wire:click="confirmDelete({{ $schedule->id }})" 
+                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg">
+                            Delete
+                        </button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach ($schedules as $schedule)
-                    <tr class="odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">{{ $schedule->movie->title }}</td>
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">{{ $schedule->theatre->name }}</td>
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">{{ $schedule->date }}</td>
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">{{ $schedule->start_time }}</td>
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2">{{ $schedule->end_time }}</td>
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-center">
-                            @if ($schedule->is_active)
-                                <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>
-                            @else
-                                <span class="text-red-600 dark:text-red-400 font-semibold">Inactive</span>
-                            @endif
-                        </td>
-                        <td class="border border-gray-300 dark:border-gray-700 px-4 py-2 text-center">
-                            <button wire:click="edit({{ $schedule->id }})" class="px-2 py-1 text-blue-600 dark:text-blue-400 hover:underline">Edit</button>
-                            <button wire:click="delete({{ $schedule->id }})" class="px-2 py-1 text-red-600 dark:text-red-400 hover:underline">Delete</button>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+
+    <!-- Confirm Delete Modal -->
+    @if ($showModal)
+        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+                <h3 class="text-lg font-semibold mb-4">Confirm Delete</h3>
+                <p class="text-sm mb-4">Type <strong>"Delete Confirm"</strong> to confirm.</p>
+                <input type="text" 
+                       wire:model.defer="confirmDeleteInput" 
+                       class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-md w-full">
+                <div class="flex justify-end space-x-4 mt-4">
+                    <button wire:click="closeModal" 
+                            class="px-4 py-2 bg-gray-500 dark:bg-gray-700 text-white rounded-lg">
+                        Cancel
+                    </button>
+                    <button wire:click="delete" 
+                            class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

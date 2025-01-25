@@ -83,36 +83,36 @@
     <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
         <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             <tr>
-                <th class="px-4 py-2 text-center">Title</th>
-                <th class="px-4 py-2 text-center">Genre</th>
-                <th class="px-4 py-2 text-center">Image</th>
-                <th class="px-4 py-2 text-center">Director</th>
-                <th class="px-4 py-2 text-center">Duration</th>
-                <th class="px-4 py-2 text-center">Actions</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Title</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Genre</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Image</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Director</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Duration</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-800 dark:text-gray-200">
             @foreach ($movies as $movie)
                 <tr class="border-t dark:border-gray-600 dark:hover:bg-gray-800 text-center">
-                    <td class="px-4 py-2">{{ $movie->title }}</td>
-                    <td class="px-4 py-2">{{ $movie->genre }}</td>
-                    <td class="px-4 py-2">
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->title }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->genre }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
                         @if($movie->image_path)
                             <img src="{{ asset('storage/' . $movie->image_path) }}" alt="Cinema Image" class="w-16 h-16 rounded-md mx-auto">
                         @else
                             <span>No Image</span>
                         @endif
                     </td>
-                    <td class="px-4 py-2">{{ $movie->director }}</td>
-                    <td class="px-4 py-2">{{ $movie->duration }}</td>
-                    <td class="px-4 py-2">
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->director }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->duration }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
                         <button wire:click="edit({{ $movie->id }})" class="px-3 py-1 bg-yellow-500 text-white rounded">Edit</button>
-                        <button wire:click="confirmDelete({{ $movie->id }})"  class="bg-red-500 dark:bg-red-400 hover:bg-red-600 dark:hover:bg-red-500 text-white px-4 py-1 rounded-lg"">Delete</button>
+                        <button wire:click="confirmDelete({{ $movie->id }})" class="bg-red-500 dark:bg-red-400 hover:bg-red-600 dark:hover:bg-red-500 text-white px-4 py-1 rounded-lg">Delete</button>
                     </td>
                 </tr>
             @endforeach
         </tbody>
-    </table>
+    </table>    
 
     <!-- Delete Confirmation Modal -->
     @if ($showModal)

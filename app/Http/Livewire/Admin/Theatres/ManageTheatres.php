@@ -13,7 +13,9 @@ class ManageTheatres extends Component
 
     public $theatres = [], $cinemas;
     public $name, $cinema_id, $capacity, $type = '2D', $is_active = true, $screen_size, $sound_system, $image, $theatreId;
-
+    public $showModal = false;
+    public $confirmDeleteInput = '';
+    public $deleteId;
     public $isEditing = false;
 
     protected $rules = [
@@ -119,11 +121,28 @@ class ManageTheatres extends Component
         session()->flash('success', 'Theatre updated successfully!');
     }
 
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        Theatre::findOrFail($id)->delete();
+        $this->showModal = true;
+        $this->deleteId = $id;
+    }
+
+    public function delete()
+    {
+        if ($this->confirmDeleteInput !== 'Delete Confirm') {
+            session()->flash('error', 'Please type "Delete Confirm" to confirm deletion.');
+            return;
+        }
+
+        Theatre::findOrFail($this->deleteId)->delete();
+        $this->reset(['confirmDeleteInput', 'deleteId', 'showModal']);
         $this->loadTheatres();
         session()->flash('success', 'Theatre deleted successfully!');
+    }
+
+    public function closeModal()
+    {
+        $this->reset(['showModal', 'confirmDeleteInput', 'deleteId']);
     }
 
     public function render()

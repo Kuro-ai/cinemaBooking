@@ -5,12 +5,13 @@ namespace App\Http\Livewire\Admin\Cinemas;
 use Livewire\Component;
 use App\Models\Cinema;
 use Livewire\WithFileUploads;
+
 class ManageCinemas extends Component
 {
     use WithFileUploads;
 
     public $cinemas, $name, $location, $city, $contact_number, $email, $is_active, $cinemaId, $image;
-    public $isEditing = false;
+    public $isEditing = false, $showModal = false, $confirmDeleteInput = ''; 
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -19,7 +20,8 @@ class ManageCinemas extends Component
         'contact_number' => 'nullable|string|max:20',
         'email' => 'nullable|email|max:255',
         'is_active' => 'boolean',
-        'image' => 'nullable|image|max:1024', 
+        'image' => 'nullable|image|max:1024',
+        'deleteConfirm' => 'required_if:showModal,true|in:Delete Confirm',
     ];
 
     public function render()
@@ -99,14 +101,31 @@ class ManageCinemas extends Component
         session()->flash('success', 'Cinema updated successfully!');
     }
 
-
-    public function delete($id)
+    public function delete()
     {
-        Cinema::findOrFail($id)->delete();
-        $this->loadCinemas();
+        $this->validate([
+            'confirmDeleteInput' => 'required|in:Delete Confirm', 
+        ]);
+
+        Cinema::findOrFail($this->cinemaId)->delete(); 
+        $this->loadCinemas(); 
         session()->flash('success', 'Cinema deleted successfully!');
+        $this->closeModal(); 
     }
 
-    
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->cinemaId = null; 
+        $this->confirmDeleteInput = ''; 
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->cinemaId = $id; 
+        $this->showModal = true; 
+    }
+
 }
+
 

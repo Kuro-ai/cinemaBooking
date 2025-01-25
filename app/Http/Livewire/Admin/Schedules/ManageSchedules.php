@@ -10,10 +10,11 @@ use App\Models\Seat;
 
 class ManageSchedules extends Component
 {
-    public $schedules;
-    public $movies;
-    public $theatres;
+    public $schedules, $movies, $theatres;
     public $movie_id, $theatre_id, $date, $start_time, $end_time, $is_active = true, $scheduleId;
+    public $confirmDeleteInput = '';
+    public $deleteId;
+    public $showModal = false;
     public $isEditing = false;
 
     protected $rules = [
@@ -35,9 +36,7 @@ class ManageSchedules extends Component
     public function loadSchedules()
     {
         $this->schedules = Schedule::with(['movie', 'theatre'])
-            ->whereHas('movie', function ($query) {
-                $query->where('is_active', true);
-            })
+            ->whereHas('movie', fn($q) => $q->where('is_active', true))
             ->orderBy('date')
             ->orderBy('start_time')
             ->get();
@@ -59,26 +58,16 @@ class ManageSchedules extends Component
     {
         $validatedData = $this->validate();
 
-        // Create the schedule
-        $schedule = Schedule::create([
-            'movie_id' => $this->movie_id,
-            'theatre_id' => $this->theatre_id,
-            'date' => $this->date,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
-            'is_active' => $this->is_active,
-        ]);
+        $schedule = Schedule::create($validatedData);
 
-        // Attach seats to the schedule and set them as available in the pivot table
         $theatreSeats = Seat::where('theatre_id', $this->theatre_id)->get();
         foreach ($theatreSeats as $seat) {
             $schedule->seats()->attach($seat->id, ['is_available' => true]);
         }
 
-        // Reset the form and reload schedules
         $this->resetForm();
         $this->loadSchedules();
-        session()->flash('success', 'Schedule created successfully, and seats have been associated!');
+        session()->flash('success', 'Schedule created successfully and seats associated!');
     }
 
     public function edit($id)
@@ -96,31 +85,41 @@ class ManageSchedules extends Component
 
     public function update()
     {
-        $this->start_time = substr($this->start_time, 0, 5);  
-        $this->end_time = substr($this->end_time, 0, 5);      
-    
         $validatedData = $this->validate();
-    
+
         $schedule = Schedule::findOrFail($this->scheduleId);
         $schedule->update($validatedData);
-    
+
         $this->resetForm();
         $this->loadSchedules();
         session()->flash('success', 'Schedule updated successfully!');
     }
-    
 
-
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        $schedule = Schedule::findOrFail($id);
+        $this->showModal = true;
+        $this->deleteId = $id;
+    }
 
-        // Detach seats before deleting the schedule
+    public function delete()
+    {
+        if ($this->confirmDeleteInput !== 'Delete Confirm') {
+            session()->flash('error', 'Please type "Delete Confirm" to confirm deletion.');
+            return;
+        }
+
+        $schedule = Schedule::findOrFail($this->deleteId);
         $schedule->seats()->detach();
         $schedule->delete();
 
+        $this->reset(['confirmDeleteInput', 'deleteId', 'showModal']);
         $this->loadSchedules();
         session()->flash('success', 'Schedule and associated seats deleted successfully!');
+    }
+
+    public function closeModal()
+    {
+        $this->reset(['showModal', 'confirmDeleteInput', 'deleteId']);
     }
 
     public function render()
@@ -128,3 +127,4 @@ class ManageSchedules extends Component
         return view('livewire.admin.schedules.manage-schedules');
     }
 }
+

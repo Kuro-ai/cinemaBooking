@@ -167,7 +167,6 @@ class ManageMovies extends Component
         }
     }
 
-
     public function render()
     {
         return view('livewire.admin.movies.manage-movies');
