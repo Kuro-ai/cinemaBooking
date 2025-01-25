@@ -16,6 +16,10 @@ class ManageMovies extends Component
     public $movieId;
     public $image; 
     public $imagePath; 
+    public $showModal = false;
+    public $deleteId;
+    public $confirmDeleteInput = '';
+
 
     public function mount()
     {
@@ -138,6 +142,31 @@ class ManageMovies extends Component
         $this->imagePath = null;
         $this->isEditing = false;
     }
+
+    public function confirmDelete($id)
+    {
+        $this->deleteId = $id;
+        $this->showModal = true;
+        $this->confirmDeleteInput = '';
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+    }
+
+    public function delete()
+    {
+        if ($this->confirmDeleteInput === 'Delete Confirm') {
+            Movie::findOrFail($this->deleteId)->delete();
+            $this->movies = $this->movies->where('id', '!=', $this->deleteId);
+            $this->showModal = false;
+            session()->flash('success', 'Movie deleted successfully!');
+        } else {
+            session()->flash('error', 'You must type "Delete Confirm" to proceed.');
+        }
+    }
+
 
     public function render()
     {

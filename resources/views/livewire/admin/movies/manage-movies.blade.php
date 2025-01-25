@@ -1,108 +1,104 @@
-<div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mb-4">Manage Movies</h2>
-    <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}" class="mb-4">
-        <div class="grid grid-cols-2 gap-4">
+<div class="p-6 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-md">
+    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 mb-6">Manage Movies</h2>
+    <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Movie Fields -->
             <input type="text" 
                    wire:model.defer="title" 
                    placeholder="Title" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" 
                    required>
             <input type="text" 
                    wire:model.defer="genre" 
                    placeholder="Genre" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" 
                    required>
             <input type="text" 
                    wire:model.defer="director" 
                    placeholder="Director" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md">
             <input type="text" 
                    wire:model.defer="duration" 
                    placeholder="HH:MM" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" 
                    pattern="([0-9]{1,2}):([0-9]{2})" 
                    title="Enter time in HH:MM format" 
-                   required 
-                   oninput="this.value = this.value.replace(/[^0-9:]/g, '')">            
+                   required>
             <input type="text" 
                    wire:model.defer="language" 
                    placeholder="Language" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md">
             <input type="url" 
                    wire:model.defer="trailer_url" 
                    placeholder="Trailer URL" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-            <textarea wire:model.defer="description" 
-                      placeholder="Description" 
-                      class="form-textarea bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"></textarea>
-            <label class="flex items-center">
-                <input type="checkbox" 
-                       wire:model.defer="is_active" 
-                       class="form-checkbox bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                <span class="ml-2 text-gray-800 dark:text-gray-200">Active</span>
-            </label>
-            
-            <!-- Multi-Select Dropdown for Theatres -->
-            <div class="col-span-2">
-                <label for="theatres" class="block text-gray-800 dark:text-gray-200">Select Theatres</label>
-                <select wire:model.defer="theatres" id="theatres" multiple 
-                        class="form-select bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 w-full"
-                        size="5">
-                    @foreach($allTheatres as $theatre)
-                        <option value="{{ $theatre->id }}">
-                            {{ $theatre->name }} ({{ $theatre->cinema->name }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <input 
-            type="file" 
-            wire:model="image" 
-            class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md"
-        >
+                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md">
+        </div>
+        <textarea wire:model.defer="description" 
+                  placeholder="Description" 
+                  class="form-textarea bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md w-full"></textarea>
+        
+        <div>
+            <label for="theatres" class="block text-gray-800 dark:text-gray-200 mb-1">Select Theatres</label>
+            <select wire:model.defer="theatres" id="theatres" multiple 
+                    class="form-select bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 w-full"
+                    size="5">
+                @foreach($allTheatres as $theatre)
+                    <option value="{{ $theatre->id }}">
+                        {{ $theatre->name }} ({{ $theatre->cinema->name }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <input type="file" 
+                   wire:model="image" 
+                   id="image"
+                   class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md">
             @error('image') 
                 <span class="text-red-500">{{ $message }}</span> 
             @enderror
-
-            <!-- Image Preview -->
-            <div class="col-span-2 mt-4">
-                @if ($image)
-                    <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
-                    <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-32 h-32 rounded-md border border-gray-300 dark:border-gray-600">
-                @elseif ($isEditing && $imagePath)
-                    <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
-                    <img src="{{ asset('storage/' . $imagePath) }}" alt="Existing Image" class="w-32 h-32 rounded-md border border-gray-300 dark:border-gray-600">
-                @endif
         </div>
-            
+        <div>
+            @if ($image)
+                <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
+                <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+            @elseif ($isEditing && $imagePath)
+                <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
+                <img src="{{ asset('storage/' . $imagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+            @endif
+        </div>
+        <div class="flex items-center space-x-2">
+            <input type="checkbox" 
+                   wire:model.defer="is_active" 
+                   class="form-checkbox text-indigo-600 dark:text-indigo-400 dark:bg-gray-700 rounded">
+            <span class="dark:text-gray-200">Active</span>
         </div>
         <button type="submit" 
-                class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800">
+                class=" bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white px-4 py-2 rounded-lg">
             {{ $isEditing ? 'Update' : 'Create' }}
         </button>
     </form>
 
     <!-- Movie Table -->
-    <table class="table-auto w-full bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
+    <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
         <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             <tr>
-                <th class="px-4 py-2">Title</th>
-                <th class="px-4 py-2">Genre</th>
-                <th class="px-4 py-2">Image</th>
-                <th class="px-4 py-2">Director</th>
-                <th class="px-4 py-2">Duration</th>
-                <th class="px-4 py-2">Actions</th>
+                <th class="px-4 py-2 text-center">Title</th>
+                <th class="px-4 py-2 text-center">Genre</th>
+                <th class="px-4 py-2 text-center">Image</th>
+                <th class="px-4 py-2 text-center">Director</th>
+                <th class="px-4 py-2 text-center">Duration</th>
+                <th class="px-4 py-2 text-center">Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-800 dark:text-gray-200">
             @foreach ($movies as $movie)
-                <tr class="border-t dark:border-gray-600">
+                <tr class="border-t dark:border-gray-600 dark:hover:bg-gray-800 text-center">
                     <td class="px-4 py-2">{{ $movie->title }}</td>
                     <td class="px-4 py-2">{{ $movie->genre }}</td>
-                    <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
+                    <td class="px-4 py-2">
                         @if($movie->image_path)
-                            <img src="{{ asset('storage/' . $movie->image_path) }}" alt="Cinema Image" class="w-16 h-16 rounded-md">
+                            <img src="{{ asset('storage/' . $movie->image_path) }}" alt="Cinema Image" class="w-16 h-16 rounded-md mx-auto">
                         @else
                             <span>No Image</span>
                         @endif
@@ -110,11 +106,41 @@
                     <td class="px-4 py-2">{{ $movie->director }}</td>
                     <td class="px-4 py-2">{{ $movie->duration }}</td>
                     <td class="px-4 py-2">
-                        <button wire:click="edit({{ $movie->id }})" class="btn btn-secondary">Edit</button>
-                        <button wire:click="delete({{ $movie->id }})" class="btn btn-danger">Delete</button>
+                        <button wire:click="edit({{ $movie->id }})" class="px-3 py-1 bg-yellow-500 text-white rounded">Edit</button>
+                        <button wire:click="confirmDelete({{ $movie->id }})"  class="bg-red-500 dark:bg-red-400 hover:bg-red-600 dark:hover:bg-red-500 text-white px-4 py-1 rounded-lg"">Delete</button>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    <!-- Delete Confirmation Modal -->
+    @if ($showModal)
+        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+                <h3 class="text-lg font-semibold mb-4">Confirm Delete</h3>
+                <p class="text-sm mb-4">Type <strong>"Delete Confirm"</strong> to confirm the deletion.</p>
+                <input 
+                    type="text" 
+                    wire:model.defer="confirmDeleteInput" 
+                    placeholder="Delete Confirm" 
+                    class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-lg px-4 py-2 w-full"
+                >
+                <div class="flex justify-end space-x-4 mt-4">
+                    <button 
+                        wire:click="closeModal" 
+                        class="dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        wire:click="delete" 
+                        class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                    >
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
