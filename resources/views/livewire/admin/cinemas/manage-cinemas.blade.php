@@ -43,6 +43,19 @@
                     > 
                     <span>Active</span>
                 </label>
+                <input 
+                    type="file" 
+                    wire:model="image" 
+                    class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md"
+                >
+                @error('image') <span class="text-red-500">{{ $message }}</span> @enderror
+
+                <div class="col-span-2 mt-4">
+                    @if ($image)
+                        <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
+                        <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-32 h-32 rounded-md border border-gray-300 dark:border-gray-600">
+                    @endif
+                </div>
             </div>
             <button 
                 type="submit" 
@@ -51,11 +64,13 @@
                 {{ $isEditing ? 'Update' : 'Create' }}
             </button>
         </form>
+        
     </div>
 
     <table class="table-auto w-full text-gray-800 dark:text-gray-200 border-collapse">
         <thead class="bg-gray-300 dark:bg-gray-700">
             <tr>
+                <th class="border border-gray-400 dark:border-gray-600 px-4 py-2">Image</th>
                 <th class="border border-gray-400 dark:border-gray-600 px-4 py-2">Name</th>
                 <th class="border border-gray-400 dark:border-gray-600 px-4 py-2">Location</th>
                 <th class="border border-gray-400 dark:border-gray-600 px-4 py-2">City</th>
@@ -68,30 +83,26 @@
         <tbody>
             @foreach ($cinemas as $cinema)
                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
+                        @if($cinema->image_path)
+                            <img src="{{ asset('storage/' . $cinema->image_path) }}" alt="Cinema Image" class="w-16 h-16 rounded-md">
+                        @else
+                            <span>No Image</span>
+                        @endif
+                    </td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->name }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->location }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->city }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->contact_number }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->email }}</td>
+                    <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->is_active ? 'Active' : 'Inactive' }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
-                        {{ $cinema->is_active ? 'Active' : 'Inactive' }}
-                    </td>
-                    <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
-                        <button 
-                            wire:click="edit({{ $cinema->id }})" 
-                            class="btn btn-secondary bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-black dark:text-white rounded-md px-2 py-1"
-                        >
-                            Edit
-                        </button>
-                        <button 
-                            wire:click="delete({{ $cinema->id }})" 
-                            class="btn btn-danger bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded-md px-2 py-1"
-                        >
-                            Delete
-                        </button>
+                        <button wire:click="edit({{ $cinema->id }})" class="btn btn-secondary">Edit</button>
+                        <button wire:click="delete({{ $cinema->id }})" class="btn btn-danger">Delete</button>
                     </td>
                 </tr>
             @endforeach
         </tbody>
+        
     </table>
 </div>

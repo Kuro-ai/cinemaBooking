@@ -4,44 +4,50 @@ namespace App\Http\Livewire\Admin\Movies;
 use Livewire\Component;
 use App\Models\Movie;
 use App\Models\Theatre;
+use Livewire\WithFileUploads; 
 
 class ManageMovies extends Component
 {
-    public $title, $genre, $release_date, $director, $duration, $language, $trailer_url, $description, $is_active, $theatres = [];
+    use WithFileUploads;
+    
+    public $title, $genre, $director, $duration, $language, $trailer_url, $description, $is_active, $theatres = [];
     public $movies, $allTheatres;
     public $isEditing = false;
     public $movieId;
+    public $image; 
+    public $imagePath; 
 
-    // Mount method to load existing theatres
     public function mount()
     {
-        $this->allTheatres = Theatre::all(); // Get all theatres
-        $this->movies = Movie::all(); // Get all movies
+        $this->allTheatres = Theatre::all();
+        $this->movies = Movie::all(); 
     }
 
-    // Store new movie
     public function store()
     {
         $this->validate([
             'title' => 'required|string|max:255',
             'genre' => 'required|string|max:255',
-            'release_date' => 'required|date',
             'duration' => 'required|string',
             'is_active' => 'boolean',
             'theatres' => 'nullable|array',
             'theatres.*' => 'exists:theatres,id',
+            'image' => 'required|image|max:1024',
         ]);
+
+        // Save the uploaded image
+        $imagePath = $this->image->store('movies', 'public');
 
         $movie = Movie::create([
             'title' => $this->title,
             'genre' => $this->genre,
-            'release_date' => $this->release_date,
             'director' => $this->director,
             'duration' => $this->duration,
             'language' => $this->language,
             'trailer_url' => $this->trailer_url,
             'description' => $this->description,
             'is_active' => $this->is_active ?? false,
+            'image_path' => $imagePath,
         ]);
 
         // Sync selected theatres
@@ -54,7 +60,7 @@ class ManageMovies extends Component
         $this->resetForm();
     }
 
-    // Edit existing movie
+
     public function edit($movieId)
     {
         $this->isEditing = true;
@@ -62,7 +68,6 @@ class ManageMovies extends Component
         $this->movieId = $movie->id;
         $this->title = $movie->title;
         $this->genre = $movie->genre;
-        $this->release_date = $movie->release_date;
         $this->director = $movie->director;
         $this->duration = $movie->duration;
         $this->language = $movie->language;
@@ -78,18 +83,24 @@ class ManageMovies extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'genre' => 'required|string|max:255',
-            'release_date' => 'required|date',
             'duration' => 'required|string',
             'is_active' => 'boolean',
             'theatres' => 'nullable|array',
             'theatres.*' => 'exists:theatres,id',
+            'image' => 'nullable|image|max:1024',
         ]);
 
         $movie = Movie::find($this->movieId);
+
+        // Update the image if a new one is uploaded
+        if ($this->image) {
+            $imagePath = $this->image->store('movies', 'public');
+            $movie->image_path = $imagePath;
+        }
+
         $movie->update([
             'title' => $this->title,
             'genre' => $this->genre,
-            'release_date' => $this->release_date,
             'director' => $this->director,
             'duration' => $this->duration,
             'language' => $this->language,
@@ -111,12 +122,11 @@ class ManageMovies extends Component
         $this->resetForm();
     }
 
-    // Reset the form
+
     public function resetForm()
     {
         $this->title = '';
         $this->genre = '';
-        $this->release_date = '';
         $this->director = '';
         $this->duration = '';
         $this->language = '';
@@ -124,6 +134,8 @@ class ManageMovies extends Component
         $this->description = '';
         $this->is_active = false;
         $this->theatres = [];
+        $this->image = null;
+        $this->imagePath = null;
         $this->isEditing = false;
     }
 

@@ -18,12 +18,12 @@ class Movie extends Model
         'title',
         'description',
         'genre',
-        'release_date',
         'director',
         'duration',
         'language',
         'trailer_url',
         'is_active',
+        'image_path',
     ];
 
     /**

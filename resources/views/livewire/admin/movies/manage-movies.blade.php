@@ -13,10 +13,6 @@
                    placeholder="Genre" 
                    class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
                    required>
-            <input type="date" 
-                   wire:model.defer="release_date" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500" 
-                   required>
             <input type="text" 
                    wire:model.defer="director" 
                    placeholder="Director" 
@@ -60,7 +56,25 @@
                     @endforeach
                 </select>
             </div>
-            
+            <input 
+            type="file" 
+            wire:model="image" 
+            class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md"
+        >
+            @error('image') 
+                <span class="text-red-500">{{ $message }}</span> 
+            @enderror
+
+            <!-- Image Preview -->
+            <div class="col-span-2 mt-4">
+                @if ($image)
+                    <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
+                    <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-32 h-32 rounded-md border border-gray-300 dark:border-gray-600">
+                @elseif ($isEditing && $imagePath)
+                    <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
+                    <img src="{{ asset('storage/' . $imagePath) }}" alt="Existing Image" class="w-32 h-32 rounded-md border border-gray-300 dark:border-gray-600">
+                @endif
+        </div>
             
         </div>
         <button type="submit" 
@@ -75,7 +89,7 @@
             <tr>
                 <th class="px-4 py-2">Title</th>
                 <th class="px-4 py-2">Genre</th>
-                <th class="px-4 py-2">Release Date</th>
+                <th class="px-4 py-2">Image</th>
                 <th class="px-4 py-2">Director</th>
                 <th class="px-4 py-2">Duration</th>
                 <th class="px-4 py-2">Actions</th>
@@ -86,7 +100,13 @@
                 <tr class="border-t dark:border-gray-600">
                     <td class="px-4 py-2">{{ $movie->title }}</td>
                     <td class="px-4 py-2">{{ $movie->genre }}</td>
-                    <td class="px-4 py-2">{{ $movie->release_date }}</td>
+                    <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
+                        @if($movie->image_path)
+                            <img src="{{ asset('storage/' . $movie->image_path) }}" alt="Cinema Image" class="w-16 h-16 rounded-md">
+                        @else
+                            <span>No Image</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-2">{{ $movie->director }}</td>
                     <td class="px-4 py-2">{{ $movie->duration }}</td>
                     <td class="px-4 py-2">

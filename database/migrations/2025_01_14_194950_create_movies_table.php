@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('genre');
-            $table->date('release_date');
             $table->string('director')->nullable();
             $table->string('duration');
             $table->string('language')->default('English');
             $table->string('trailer_url')->nullable();
+            $table->string('image_path')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->unique(['title', 'release_date']);

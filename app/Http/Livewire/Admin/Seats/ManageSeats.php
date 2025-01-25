@@ -12,6 +12,9 @@ class ManageSeats extends Component
     public $theatres;
     public $seat_number, $theatre_id, $type = 'regular', $price, $is_available = true, $seatId;
     public $isEditing = false;
+    public $deleteId;
+    public $showModal = false;
+    public $confirmDeleteInput = '';
 
     protected $rules = [
         'seat_number' => 'required|string|max:10',
@@ -73,11 +76,28 @@ class ManageSeats extends Component
         session()->flash('success', 'Seat updated successfully!');
     }
 
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        Seat::findOrFail($id)->delete();
-        $this->loadSeats();
-        session()->flash('success', 'Seat deleted successfully!');
+        $this->deleteId = $id;
+        $this->showModal = true;
+        $this->confirmDeleteInput = '';
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+    }
+
+    public function delete()
+    {
+        if ($this->confirmDeleteInput === 'Delete Confirm') {
+            Seat::findOrFail($this->deleteId)->delete();
+            $this->loadSeats();
+            $this->showModal = false;
+            session()->flash('success', 'Seat deleted successfully!');
+        } else {
+            session()->flash('error', 'You must type "Delete Confirm" to delete the seat.');
+        }
     }
 
     public function render()

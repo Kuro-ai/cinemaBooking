@@ -4,11 +4,12 @@ namespace App\Http\Livewire\Admin\Cinemas;
 
 use Livewire\Component;
 use App\Models\Cinema;
-
+use Livewire\WithFileUploads;
 class ManageCinemas extends Component
 {
-    public $cinemas, $name, $location, $city, $contact_number, $email, $is_active, $cinemaId;
+    use WithFileUploads;
 
+    public $cinemas, $name, $location, $city, $contact_number, $email, $is_active, $cinemaId, $image;
     public $isEditing = false;
 
     protected $rules = [
@@ -18,6 +19,7 @@ class ManageCinemas extends Component
         'contact_number' => 'nullable|string|max:20',
         'email' => 'nullable|email|max:255',
         'is_active' => 'boolean',
+        'image' => 'nullable|image|max:1024', 
     ];
 
     public function render()
@@ -43,6 +45,7 @@ class ManageCinemas extends Component
         $this->contact_number = '';
         $this->email = '';
         $this->is_active = true;
+        $this->image = null;
         $this->cinemaId = null;
         $this->isEditing = false;
     }
@@ -50,7 +53,14 @@ class ManageCinemas extends Component
     public function store()
     {
         $this->validate();
-        Cinema::create($this->validate());
+
+        $data = $this->validate();
+        if ($this->image) {
+            $data['image_path'] = $this->image->store('cinemas', 'public'); 
+        }
+
+        Cinema::create($data);
+
         $this->resetForm();
         $this->loadCinemas();
         session()->flash('success', 'Cinema created successfully!');
@@ -59,6 +69,7 @@ class ManageCinemas extends Component
     public function edit($id)
     {
         $cinema = Cinema::findOrFail($id);
+
         $this->cinemaId = $id;
         $this->name = $cinema->name;
         $this->location = $cinema->location;
@@ -66,17 +77,28 @@ class ManageCinemas extends Component
         $this->contact_number = $cinema->contact_number;
         $this->email = $cinema->email;
         $this->is_active = $cinema->is_active;
+        $this->image = null;
         $this->isEditing = true;
     }
 
     public function update()
     {
         $this->validate();
-        Cinema::findOrFail($this->cinemaId)->update($this->validate());
+
+        $cinema = Cinema::findOrFail($this->cinemaId);
+
+        $data = $this->validate();
+        if ($this->image) {
+            $data['image_path'] = $this->image->store('cinemas', 'public'); 
+        }
+
+        $cinema->update($data);
+
         $this->resetForm();
         $this->loadCinemas();
         session()->flash('success', 'Cinema updated successfully!');
     }
+
 
     public function delete($id)
     {

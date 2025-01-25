@@ -8,8 +8,6 @@ use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\SeatController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Auth;
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -32,8 +30,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::resource('users', UserController::class);
     Route::resource('bookings', BookingController::class);
-    Route::resource('payments', PaymentController::class);
-    Route::resource('tickets', TicketController::class);
     //                                    ^
     //Admin needs to be able to view them |
 });
