@@ -17,7 +17,6 @@ class Theatre extends Model
     protected $fillable = [
         'name',
         'cinema_id',
-        'capacity',
         'type',
         'is_active',
         'screen_size',

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('movie_id')->constrained()->onDelete('cascade');
             $table->foreignId('theatre_id')->constrained()->onDelete('cascade');
             $table->date('date'); 
-            $table->time('start_time')->nullable()->change();
-            $table->time('end_time')->nullable()->change();   
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();   
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->unique(['movie_id', 'theatre_id', 'date', 'start_time']);

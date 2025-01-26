@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('cinema_id')->constrained()->onDelete('cascade');
-            $table->integer('capacity');
             $table->string('type')->default('2D');
             $table->boolean('is_active')->default(true);
             $table->string('screen_size')->nullable();

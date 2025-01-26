@@ -27,10 +27,8 @@
                    wire:model.defer="start_time" 
                    class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
 
-            <input type="time" 
-                   wire:model.defer="end_time" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
-        </div>
+           
+         </div>
 
         <div>
             <label class="flex items-center space-x-2">
@@ -55,8 +53,7 @@
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Theatre</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Date</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Start Time</th>
-                <th class="px-4 py-2 text-center border dark:border-gray-600">End Time</th>
-                <th class="px-4 py-2 text-center border dark:border-gray-600">Is Active</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Status</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Actions</th>
             </tr>
         </thead>
@@ -67,7 +64,6 @@
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->theatre->name }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->date }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->start_time }}</td>
-                    <td class="px-4 py-2 border dark:border-gray-600">{{ $schedule->end_time }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">
                         @if ($schedule->is_active)
                             <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>
@@ -92,24 +88,37 @@
 
     <!-- Confirm Delete Modal -->
     @if ($showModal)
-        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
-                <h3 class="text-lg font-semibold mb-4">Confirm Delete</h3>
-                <p class="text-sm mb-4">Type <strong>"Delete Confirm"</strong> to confirm.</p>
-                <input type="text" 
-                       wire:model.defer="confirmDeleteInput" 
-                       class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-md w-full">
-                <div class="flex justify-end space-x-4 mt-4">
-                    <button wire:click="closeModal" 
-                            class="px-4 py-2 bg-gray-500 dark:bg-gray-700 text-white rounded-lg">
-                        Cancel
-                    </button>
-                    <button wire:click="delete" 
-                            class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg">
-                        Confirm
-                    </button>
-                </div>
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Confirm Delete</h3>
+            <p class="text-sm mb-4 text-gray-600 dark:text-gray-400">
+                Type <strong class="text-gray-900 dark:text-gray-100">"Delete Confirm"</strong> to confirm the deletion.
+            </p>
+            <input 
+                type="text" 
+                wire:model.defer="confirmDeleteInput" 
+                placeholder="Delete Confirm" 
+                class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-lg px-4 py-2 w-full"
+            >
+            @error('confirmDeleteInput')
+                <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span>
+            @enderror
+            <div class="flex justify-end space-x-4 mt-4">
+                <button 
+                    wire:click="closeModal" 
+                    class="px-4 py-2 dark:hover:bg-gray-700 text-white rounded-lg"
+                >
+                    Cancel
+                </button>
+                <button 
+                    wire:click="delete" 
+                    class="px-4 py-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white rounded-lg"
+                >
+                    Confirm
+                </button>
             </div>
         </div>
-    @endif
+    </div>
+@endif
+
 </div>

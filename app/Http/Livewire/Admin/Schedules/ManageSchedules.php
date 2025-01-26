@@ -22,7 +22,7 @@ class ManageSchedules extends Component
         'theatre_id' => 'required|exists:theatres,id',
         'date' => 'required|date|after_or_equal:today',
         'start_time' => 'required|date_format:H:i',
-        'end_time' => 'required|date_format:H:i|after:start_time',
+        'end_time' => 'nullable|date_format:H:i|after:start_time',
         'is_active' => 'boolean',
     ];
 
@@ -72,7 +72,7 @@ class ManageSchedules extends Component
 
     public function edit($id)
     {
-        $schedule = Schedule::findOrFail($id);
+        $schedule = Schedule::findOrFail($id); 
         $this->scheduleId = $id;
         $this->movie_id = $schedule->movie_id;
         $this->theatre_id = $schedule->theatre_id;
@@ -83,17 +83,22 @@ class ManageSchedules extends Component
         $this->isEditing = true;
     }
 
+
     public function update()
     {
+        $this->start_time = date('H:i', strtotime($this->start_time));
+        $this->end_time = $this->end_time ? date('H:i', strtotime($this->end_time)) : null;
         $validatedData = $this->validate();
-
+        
         $schedule = Schedule::findOrFail($this->scheduleId);
+        
         $schedule->update($validatedData);
 
         $this->resetForm();
         $this->loadSchedules();
         session()->flash('success', 'Schedule updated successfully!');
     }
+
 
     public function confirmDelete($id)
     {

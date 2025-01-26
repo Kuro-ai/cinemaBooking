@@ -38,18 +38,6 @@
                   class="form-textarea bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md w-full"></textarea>
         
         <div>
-            <label for="theatres" class="block text-gray-800 dark:text-gray-200 mb-1">Select Theatres</label>
-            <select wire:model.defer="theatres" id="theatres" multiple 
-                    class="form-select bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 w-full"
-                    size="5">
-                @foreach($allTheatres as $theatre)
-                    <option value="{{ $theatre->id }}">
-                        {{ $theatre->name }} ({{ $theatre->cinema->name }})
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div>
             <input type="file" 
                    wire:model="image" 
                    id="image"
@@ -62,10 +50,12 @@
             @if ($image)
                 <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
                 <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
-            @elseif ($isEditing && $imagePath)
+            @elseif ($isEditing && $existingImagePath)
                 <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
-                <img src="{{ asset('storage/' . $imagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
-            @endif
+                <img src="{{ asset('storage/' . $existingImagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+            @else
+                <p class="text-gray-600 dark:text-gray-300">No Image Available</p>
+            @endif 
         </div>
         <div class="flex items-center space-x-2">
             <input type="checkbox" 
@@ -88,6 +78,7 @@
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Image</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Director</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Duration</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Status</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Actions</th>
             </tr>
         </thead>
@@ -105,6 +96,13 @@
                     </td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->director }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->duration }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
+                        @if ($movie->is_active)
+                            <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>
+                        @else
+                            <span class="text-red-600 dark:text-red-400 font-semibold">Inactive</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-2 border dark:border-gray-600">
                         <button wire:click="edit({{ $movie->id }})" class="px-3 py-1 bg-yellow-500 text-white rounded">Edit</button>
                         <button wire:click="confirmDelete({{ $movie->id }})" class="bg-red-500 dark:bg-red-400 hover:bg-red-600 dark:hover:bg-red-500 text-white px-4 py-1 rounded-lg">Delete</button>

@@ -50,11 +50,13 @@
                 @if ($image)
                     <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
                     <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
-                @elseif ($isEditing && $imagePath)
+                @elseif ($isEditing && $existingImagePath)
                     <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
-                    <img src="{{ asset('storage/' . $imagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+                    <img src="{{ asset('storage/' . $existingImagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+                @else
+                    <p class="text-gray-600 dark:text-gray-300">No Image Available</p>
                 @endif
-            </div>
+            </div>            
             <div class="flex items-center space-x-2 mb-3">
                 <input type="checkbox" 
                        wire:model.defer="is_active" 
@@ -97,7 +99,13 @@
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->city }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->contact_number }}</td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->email }}</td>
-                    <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">{{ $cinema->is_active ? 'Active' : 'Inactive' }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
+                        @if ($cinema->is_active)
+                            <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>
+                        @else
+                            <span class="text-red-600 dark:text-red-400 font-semibold">Inactive</span>
+                        @endif
+                    </td>
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
                         <button wire:click="edit({{ $cinema->id }})" class="px-2 py-1 bg-yellow-500 text-white rounded">Edit</button>
                         <button wire:click="confirmDelete({{ $cinema->id }})" class="bg-red-500 dark:bg-red-400 hover:bg-red-600 dark:hover:bg-red-500 text-white px-4 py-1 rounded-lg">Delete</button>

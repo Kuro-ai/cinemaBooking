@@ -32,7 +32,6 @@ class TheatreController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'cinema_id' => 'required|exists:cinemas,id',
-            'capacity' => 'required|integer|min:1',
             'type' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'screen_size' => 'nullable|string|max:255',
@@ -68,7 +67,6 @@ class TheatreController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'cinema_id' => 'required|exists:cinemas,id',
-            'capacity' => 'required|integer|min:1',
             'type' => 'nullable|string|max:255',
             'is_active' => 'boolean',
             'screen_size' => 'nullable|string|max:255',

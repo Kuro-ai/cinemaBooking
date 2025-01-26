@@ -12,6 +12,7 @@ class ManageCinemas extends Component
 
     public $cinemas, $name, $location, $city, $contact_number, $email, $is_active, $cinemaId, $image;
     public $isEditing = false, $showModal = false, $confirmDeleteInput = ''; 
+    public $existingImagePath;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -21,7 +22,7 @@ class ManageCinemas extends Component
         'email' => 'nullable|email|max:255',
         'is_active' => 'boolean',
         'image' => 'nullable|image|max:1024',
-        'deleteConfirm' => 'required_if:showModal,true|in:Delete Confirm',
+        'confirmDeleteInput' => 'required_if:showModal,true|in:Delete Confirm',
     ];
 
     public function render()
@@ -49,6 +50,7 @@ class ManageCinemas extends Component
         $this->is_active = true;
         $this->image = null;
         $this->cinemaId = null;
+        $this->existingImagePath = null;
         $this->isEditing = false;
     }
 
@@ -59,6 +61,8 @@ class ManageCinemas extends Component
         $data = $this->validate();
         if ($this->image) {
             $data['image_path'] = $this->image->store('cinemas', 'public'); 
+        } else {
+            $data['image_path'] = null;
         }
 
         Cinema::create($data);
@@ -80,6 +84,7 @@ class ManageCinemas extends Component
         $this->email = $cinema->email;
         $this->is_active = $cinema->is_active;
         $this->image = null;
+        $this->existingImagePath = $cinema->image_path; 
         $this->isEditing = true;
     }
 
@@ -92,6 +97,8 @@ class ManageCinemas extends Component
         $data = $this->validate();
         if ($this->image) {
             $data['image_path'] = $this->image->store('cinemas', 'public'); 
+        }else {
+            $data['image_path'] = $cinema->image_path; 
         }
 
         $cinema->update($data);

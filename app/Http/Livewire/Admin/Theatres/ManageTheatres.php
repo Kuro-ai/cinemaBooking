@@ -12,16 +12,16 @@ class ManageTheatres extends Component
     use WithFileUploads;
 
     public $theatres = [], $cinemas;
-    public $name, $cinema_id, $capacity, $type = '2D', $is_active = true, $screen_size, $sound_system, $image, $theatreId;
+    public $name, $cinema_id, $type = '2D', $is_active = true, $screen_size, $sound_system, $image, $theatreId;
     public $showModal = false;
     public $confirmDeleteInput = '';
     public $deleteId;
     public $isEditing = false;
+    public $existingImagePath;
 
     protected $rules = [
         'name' => 'required|string|max:255',
         'cinema_id' => 'required|exists:cinemas,id',
-        'capacity' => 'required|integer|min:1',
         'type' => 'in:2D,3D,IMAX',
         'is_active' => 'boolean',
         'screen_size' => 'nullable|string|max:255',
@@ -44,7 +44,6 @@ class ManageTheatres extends Component
     {
         $this->name = '';
         $this->cinema_id = '';
-        $this->capacity = '';
         $this->type = '2D';
         $this->is_active = true;
         $this->screen_size = '';
@@ -61,7 +60,6 @@ class ManageTheatres extends Component
         $data = [
             'name' => $this->name,
             'cinema_id' => $this->cinema_id,
-            'capacity' => $this->capacity,
             'type' => $this->type,
             'is_active' => $this->is_active,
             'screen_size' => $this->screen_size,
@@ -86,12 +84,12 @@ class ManageTheatres extends Component
         $this->theatreId = $id;
         $this->name = $theatre->name;
         $this->cinema_id = $theatre->cinema_id;
-        $this->capacity = $theatre->capacity;
         $this->type = $theatre->type;
         $this->is_active = $theatre->is_active;
         $this->screen_size = $theatre->screen_size;
         $this->sound_system = $theatre->sound_system;
         $this->image = null; 
+        $this->existingImagePath = $theatre->image_path; 
         $this->isEditing = true;
     }
 
@@ -102,7 +100,6 @@ class ManageTheatres extends Component
         $data = [
             'name' => $this->name,
             'cinema_id' => $this->cinema_id,
-            'capacity' => $this->capacity,
             'type' => $this->type,
             'is_active' => $this->is_active,
             'screen_size' => $this->screen_size,

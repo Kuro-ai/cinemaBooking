@@ -40,14 +40,8 @@ class MovieController extends Controller
             'language' => 'nullable|string|max:255',
             'trailer_url' => 'nullable|url',
             'is_active' => 'boolean',
-            'theatres' => 'nullable|array',
-            'theatres.*' => 'exists:theatres,id', 
         ]);
 
-        $movie = Movie::create($validatedData);
-        if (isset($validatedData['theatres'])) {
-            $movie->theatres()->sync($validatedData['theatres']);
-        }
 
         return redirect()->route('movies.index')->with('success', 'Movie created successfully.');
     }
@@ -83,15 +77,9 @@ class MovieController extends Controller
             'language' => 'nullable|string|max:255',
             'trailer_url' => 'nullable|url',
             'is_active' => 'boolean',
-            'theatres' => 'nullable|array',
-            'theatres.*' => 'exists:theatres,id',
         ]);
 
         $movie->update($validatedData);
-
-        if (isset($validatedData['theatres'])) {
-            $movie->theatres()->sync($validatedData['theatres']);
-        }
 
         return redirect()->route('movies.index')->with('success', 'Movie updated successfully.');
     }

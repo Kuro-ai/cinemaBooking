@@ -15,11 +15,6 @@
                     <option value="{{ $cinema->id }}">{{ $cinema->name }}</option>
                 @endforeach
             </select>
-            <input type="number" 
-                   wire:model.defer="capacity" 
-                   placeholder="Capacity" 
-                   class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" 
-                   required>
             <select wire:model.defer="type" 
                     class="form-select bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md">
                 <option value="2D">2D</option>
@@ -43,10 +38,14 @@
             </label>
         </div>
         @if ($image)
-            <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-32 h-24 rounded-md border border-gray-300 dark:border-gray-600 mt-4">
-        @elseif ($isEditing && $image_path)
-            <img src="{{ Storage::url($image_path) }}" alt="Existing Image" class="w-32 h-24 rounded-md border border-gray-300 dark:border-gray-600 mt-4">
-        @endif
+            <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
+            <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+        @elseif ($isEditing && $existingImagePath)
+            <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
+            <img src="{{ asset('storage/' . $existingImagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+        @else
+            <p class="text-gray-600 dark:text-gray-300">No Image Available</p>
+        @endif      
         <button type="submit" 
                 class="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white px-4 py-2 rounded-lg">
             {{ $isEditing ? 'Update' : 'Create' }}
@@ -59,7 +58,6 @@
             <tr>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Name</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Cinema</th>
-                <th class="px-4 py-2 text-center border dark:border-gray-600">Capacity</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Type</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Image</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Status</th>
@@ -71,7 +69,6 @@
                 <tr class="border-t dark:border-gray-600 dark:hover:bg-gray-800">
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $theatre->name }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $theatre->cinema->name }}</td>
-                    <td class="px-4 py-2 border dark:border-gray-600">{{ $theatre->capacity }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $theatre->type }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">
                         @if ($theatre->image_path)
@@ -80,7 +77,13 @@
                             No Image
                         @endif
                     </td>
-                    <td class="px-4 py-2 border dark:border-gray-600">{{ $theatre->is_active ? 'Active' : 'Inactive' }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
+                        @if ($theatre->is_active)
+                            <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>
+                        @else
+                            <span class="text-red-600 dark:text-red-400 font-semibold">Inactive</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-2 border dark:border-gray-600">
                         <button wire:click="edit({{ $theatre->id }})" 
                                 class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-lg">
@@ -96,22 +99,31 @@
         </tbody>
     </table>
 
-    <!-- Confirm Delete Modal -->
     @if ($showModal)
         <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
                 <h3 class="text-lg font-semibold mb-4">Confirm Delete</h3>
-                <p class="text-sm mb-4">Type <strong>"Delete Confirm"</strong> to confirm.</p>
-                <input type="text" 
-                       wire:model.defer="confirmDeleteInput" 
-                       class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-md w-full">
+                <p class="text-sm mb-4">Type <strong>"Delete Confirm"</strong> to confirm the deletion.</p>
+                <input 
+                    type="text" 
+                    wire:model.defer="confirmDeleteInput" 
+                    placeholder="Delete Confirm" 
+                    class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-lg px-4 py-2 w-full"
+                >
+                @error('confirmDeleteInput')
+                    <span class="text-red-500">{{ $message }}</span>
+                @enderror
                 <div class="flex justify-end space-x-4 mt-4">
-                    <button wire:click="closeModal" 
-                            class="px-4 py-2 bg-gray-500 dark:bg-gray-700 text-white rounded-lg">
+                    <button 
+                        wire:click="closeModal" 
+                        class="dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+                    >
                         Cancel
                     </button>
-                    <button wire:click="delete" 
-                            class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg">
+                    <button 
+                        wire:click="delete" 
+                        class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                    >
                         Confirm
                     </button>
                 </div>

@@ -10,8 +10,8 @@ class ManageMovies extends Component
 {
     use WithFileUploads;
     
-    public $title, $genre, $director, $duration, $language, $trailer_url, $description, $is_active, $theatres = [];
-    public $movies, $allTheatres;
+    public $title, $genre, $director, $duration, $language, $trailer_url, $description, $is_active;
+    public $movies;
     public $isEditing = false;
     public $movieId;
     public $image; 
@@ -19,11 +19,10 @@ class ManageMovies extends Component
     public $showModal = false;
     public $deleteId;
     public $confirmDeleteInput = '';
-
+    public $existingImagePath;
 
     public function mount()
     {
-        $this->allTheatres = Theatre::all();
         $this->movies = Movie::all(); 
     }
 
@@ -34,8 +33,6 @@ class ManageMovies extends Component
             'genre' => 'required|string|max:255',
             'duration' => 'required|string',
             'is_active' => 'boolean',
-            'theatres' => 'nullable|array',
-            'theatres.*' => 'exists:theatres,id',
             'image' => 'required|image|max:1024',
         ]);
 
@@ -53,11 +50,6 @@ class ManageMovies extends Component
             'is_active' => $this->is_active ?? false,
             'image_path' => $imagePath,
         ]);
-
-        // Sync selected theatres
-        if (!empty($this->theatres)) {
-            $movie->theatres()->sync($this->theatres);
-        }
 
         $this->movies->push($movie); 
         session()->flash('success', 'Movie created successfully!');
@@ -78,7 +70,7 @@ class ManageMovies extends Component
         $this->trailer_url = $movie->trailer_url;
         $this->description = $movie->description;
         $this->is_active = $movie->is_active;
-        $this->theatres = $movie->theatres->pluck('id')->toArray();
+        $this->existingImagePath = $movie->image_path;
     }
 
     // Update movie
@@ -89,8 +81,6 @@ class ManageMovies extends Component
             'genre' => 'required|string|max:255',
             'duration' => 'required|string',
             'is_active' => 'boolean',
-            'theatres' => 'nullable|array',
-            'theatres.*' => 'exists:theatres,id',
             'image' => 'nullable|image|max:1024',
         ]);
 
@@ -113,11 +103,6 @@ class ManageMovies extends Component
             'is_active' => $this->is_active ?? false,
         ]);
 
-        // Sync selected theatres
-        if (!empty($this->theatres)) {
-            $movie->theatres()->sync($this->theatres);
-        }
-
         $this->movies = $this->movies->map(function ($m) use ($movie) {
             return $m->id === $movie->id ? $movie : $m;
         });
@@ -137,7 +122,6 @@ class ManageMovies extends Component
         $this->trailer_url = '';
         $this->description = '';
         $this->is_active = false;
-        $this->theatres = [];
         $this->image = null;
         $this->imagePath = null;
         $this->isEditing = false;
