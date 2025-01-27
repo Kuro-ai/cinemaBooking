@@ -5,12 +5,13 @@ namespace App\Http\Livewire\Admin\Cinemas;
 use Livewire\Component;
 use App\Models\Cinema;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class ManageCinemas extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
-    public $cinemas, $name, $location, $city, $contact_number, $email, $is_active, $cinemaId, $image;
+    public $name, $location, $city, $contact_number, $email, $is_active, $cinemaId, $image;
     public $isEditing = false, $showModal = false, $confirmDeleteInput = ''; 
     public $existingImagePath;
 
@@ -25,19 +26,20 @@ class ManageCinemas extends Component
         'confirmDeleteInput' => 'required_if:showModal,true|in:Delete Confirm',
     ];
 
+    protected $listeners = [
+        'resetPage' => '$refresh',
+    ];
+
     public function render()
     {
-        return view('livewire.admin.cinemas.manage-cinemas');
-    }
-
-    public function mount()
-    {
-        $this->loadCinemas();
+        return view('livewire.admin.cinemas.manage-cinemas', [
+            'cinemas' => $this->loadCinemas()
+        ]);
     }
 
     public function loadCinemas()
     {
-        $this->cinemas = Cinema::all();
+        return Cinema::paginate(10);
     }
 
     public function resetForm()
@@ -52,23 +54,36 @@ class ManageCinemas extends Component
         $this->cinemaId = null;
         $this->existingImagePath = null;
         $this->isEditing = false;
+
+        $this->resetPage(); 
+    }
+
+    public function mount()
+    {
+        $this->isEditing = false;
+        $this->resetForm();
     }
 
     public function store()
     {
+       
         $this->validate();
+        $data = [
+            'name' => $this->name,
+            'location' => $this->location,
+            'city' => $this->city,
+            'contact_number' => $this->contact_number,
+            'email' => $this->email,
+            'is_active' => $this->is_active ?? false,
+        ];
 
-        $data = $this->validate();
         if ($this->image) {
-            $data['image_path'] = $this->image->store('cinemas', 'public'); 
-        } else {
-            $data['image_path'] = null;
+            $data['image_path'] = $this->image->store('cinemas', 'public');
         }
 
         Cinema::create($data);
 
         $this->resetForm();
-        $this->loadCinemas();
         session()->flash('success', 'Cinema created successfully!');
     }
 
@@ -97,14 +112,13 @@ class ManageCinemas extends Component
         $data = $this->validate();
         if ($this->image) {
             $data['image_path'] = $this->image->store('cinemas', 'public'); 
-        }else {
+        } else {
             $data['image_path'] = $cinema->image_path; 
         }
 
         $cinema->update($data);
 
         $this->resetForm();
-        $this->loadCinemas();
         session()->flash('success', 'Cinema updated successfully!');
     }
 
@@ -115,7 +129,6 @@ class ManageCinemas extends Component
         ]);
 
         Cinema::findOrFail($this->cinemaId)->delete(); 
-        $this->loadCinemas(); 
         session()->flash('success', 'Cinema deleted successfully!');
         $this->closeModal(); 
     }
@@ -132,7 +145,4 @@ class ManageCinemas extends Component
         $this->cinemaId = $id; 
         $this->showModal = true; 
     }
-
 }
-
-

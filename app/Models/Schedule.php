@@ -20,7 +20,6 @@ class Schedule extends Model
         'theatre_id',
         'date',         
         'start_time',
-        'end_time',
         'is_active',
     ];
     

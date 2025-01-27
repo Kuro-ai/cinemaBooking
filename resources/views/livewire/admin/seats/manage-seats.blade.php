@@ -34,14 +34,6 @@
                 placeholder="Price" 
                 class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 rounded-lg px-4 py-2 w-full"
             >
-            <div class="col-span-2 flex items-center space-x-2">
-                <input 
-                    type="checkbox" 
-                    wire:model.defer="is_available" 
-                    class="form-checkbox text-indigo-600 dark:text-indigo-400 dark:bg-gray-700 rounded"
-                >
-                <span>Available</span>
-            </div>
         </div>
         <button 
             type="submit" 
@@ -86,7 +78,9 @@
             @endforeach
         </tbody>
     </table>
-
+    <div class="mt-4">
+        {{ $seats->links() }}
+    </div>
     {{-- Confirmation Modal --}}
     @if ($showModal)
         <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

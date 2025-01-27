@@ -1,45 +1,33 @@
 <?php
+
 namespace App\Http\Livewire\Admin\Movies;
 
 use Livewire\Component;
 use App\Models\Movie;
-use App\Models\Theatre;
-use Livewire\WithFileUploads; 
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class ManageMovies extends Component
 {
-    use WithFileUploads;
-    
-    public $title, $genre, $director, $duration, $language, $trailer_url, $description, $is_active;
-    public $movies;
-    public $isEditing = false;
-    public $movieId;
-    public $image; 
-    public $imagePath; 
-    public $showModal = false;
-    public $deleteId;
-    public $confirmDeleteInput = '';
-    public $existingImagePath;
+    use WithFileUploads, WithPagination;
 
-    public function mount()
-    {
-        $this->movies = Movie::all(); 
-    }
+    public $title, $genre, $director, $duration, $language, $trailer_url, $description, $is_active;
+    public $movieId, $image, $existingImagePath;
+    public $isEditing = false, $showModal = false, $deleteId, $confirmDeleteInput = '';
+
+    protected $rules = [
+        'title' => 'required|string|max:255',
+        'genre' => 'required|string|max:255',
+        'duration' => 'required|string',
+        'is_active' => 'boolean',
+        'image' => 'nullable|image|max:1024',
+    ];
 
     public function store()
     {
-        $this->validate([
-            'title' => 'required|string|max:255',
-            'genre' => 'required|string|max:255',
-            'duration' => 'required|string',
-            'is_active' => 'boolean',
-            'image' => 'required|image|max:1024',
-        ]);
+        $this->validate();
 
-        // Save the uploaded image
-        $imagePath = $this->image->store('movies', 'public');
-
-        $movie = Movie::create([
+        $data = [
             'title' => $this->title,
             'genre' => $this->genre,
             'director' => $this->director,
@@ -48,19 +36,23 @@ class ManageMovies extends Component
             'trailer_url' => $this->trailer_url,
             'description' => $this->description,
             'is_active' => $this->is_active ?? false,
-            'image_path' => $imagePath,
-        ]);
+        ];
 
-        $this->movies->push($movie); 
+        if ($this->image) {
+            $data['image_path'] = $this->image->store('movies', 'public');
+        }
+
+        Movie::create($data);
+
         session()->flash('success', 'Movie created successfully!');
         $this->resetForm();
     }
 
-
     public function edit($movieId)
     {
         $this->isEditing = true;
-        $movie = Movie::find($movieId);
+        $movie = Movie::findOrFail($movieId);
+
         $this->movieId = $movie->id;
         $this->title = $movie->title;
         $this->genre = $movie->genre;
@@ -73,26 +65,13 @@ class ManageMovies extends Component
         $this->existingImagePath = $movie->image_path;
     }
 
-    // Update movie
     public function update()
     {
-        $this->validate([
-            'title' => 'required|string|max:255',
-            'genre' => 'required|string|max:255',
-            'duration' => 'required|string',
-            'is_active' => 'boolean',
-            'image' => 'nullable|image|max:1024',
-        ]);
+        $this->validate();
 
-        $movie = Movie::find($this->movieId);
+        $movie = Movie::findOrFail($this->movieId);
 
-        // Update the image if a new one is uploaded
-        if ($this->image) {
-            $imagePath = $this->image->store('movies', 'public');
-            $movie->image_path = $imagePath;
-        }
-
-        $movie->update([
+        $data = [
             'title' => $this->title,
             'genre' => $this->genre,
             'director' => $this->director,
@@ -101,16 +80,35 @@ class ManageMovies extends Component
             'trailer_url' => $this->trailer_url,
             'description' => $this->description,
             'is_active' => $this->is_active ?? false,
-        ]);
+        ];
 
-        $this->movies = $this->movies->map(function ($m) use ($movie) {
-            return $m->id === $movie->id ? $movie : $m;
-        });
+        if ($this->image) {
+            $data['image_path'] = $this->image->store('movies', 'public');
+        }
+
+        $movie->update($data);
 
         session()->flash('success', 'Movie updated successfully!');
         $this->resetForm();
     }
 
+    public function confirmDelete($id)
+    {
+        $this->deleteId = $id;
+        $this->showModal = true;
+        $this->confirmDeleteInput = '';
+    }
+
+    public function delete()
+    {
+        if ($this->confirmDeleteInput === 'Delete Confirm') {
+            Movie::findOrFail($this->deleteId)->delete();
+            session()->flash('success', 'Movie deleted successfully!');
+            $this->resetForm();
+        } else {
+            session()->flash('error', 'You must type "Delete Confirm" to proceed.');
+        }
+    }
 
     public function resetForm()
     {
@@ -123,38 +121,17 @@ class ManageMovies extends Component
         $this->description = '';
         $this->is_active = false;
         $this->image = null;
-        $this->imagePath = null;
+        $this->existingImagePath = null;
         $this->isEditing = false;
-    }
-
-    public function confirmDelete($id)
-    {
-        $this->deleteId = $id;
-        $this->showModal = true;
-        $this->confirmDeleteInput = '';
-    }
-
-    public function closeModal()
-    {
         $this->showModal = false;
-    }
-
-    public function delete()
-    {
-        if ($this->confirmDeleteInput === 'Delete Confirm') {
-            Movie::findOrFail($this->deleteId)->delete();
-            $this->movies = $this->movies->where('id', '!=', $this->deleteId);
-            $this->showModal = false;
-            session()->flash('success', 'Movie deleted successfully!');
-        } else {
-            session()->flash('error', 'You must type "Delete Confirm" to proceed.');
-        }
+        $this->confirmDeleteInput = '';
+        $this->resetPage(); 
     }
 
     public function render()
     {
-        return view('livewire.admin.movies.manage-movies');
+        return view('livewire.admin.movies.manage-movies', [
+            'movies' => Movie::paginate(10),
+        ]);
     }
 }
-
-

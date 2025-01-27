@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Admin\Schedules;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Schedule;
 use App\Models\Movie;
 use App\Models\Theatre;
@@ -10,8 +11,10 @@ use App\Models\Seat;
 
 class ManageSchedules extends Component
 {
-    public $schedules, $movies, $theatres;
-    public $movie_id, $theatre_id, $date, $start_time, $end_time, $is_active = true, $scheduleId;
+    use WithPagination;
+
+    public $movies, $theatres;
+    public $movie_id, $theatre_id, $date, $start_time, $is_active = true, $scheduleId;
     public $confirmDeleteInput = '';
     public $deleteId;
     public $showModal = false;
@@ -22,7 +25,6 @@ class ManageSchedules extends Component
         'theatre_id' => 'required|exists:theatres,id',
         'date' => 'required|date|after_or_equal:today',
         'start_time' => 'required|date_format:H:i',
-        'end_time' => 'nullable|date_format:H:i|after:start_time',
         'is_active' => 'boolean',
     ];
 
@@ -30,16 +32,6 @@ class ManageSchedules extends Component
     {
         $this->movies = Movie::where('is_active', true)->get();
         $this->theatres = Theatre::all();
-        $this->loadSchedules();
-    }
-
-    public function loadSchedules()
-    {
-        $this->schedules = Schedule::with(['movie', 'theatre'])
-            ->whereHas('movie', fn($q) => $q->where('is_active', true))
-            ->orderBy('date')
-            ->orderBy('start_time')
-            ->get();
     }
 
     public function resetForm()
@@ -48,10 +40,11 @@ class ManageSchedules extends Component
         $this->theatre_id = '';
         $this->date = '';
         $this->start_time = '';
-        $this->end_time = '';
         $this->is_active = true;
         $this->scheduleId = null;
         $this->isEditing = false;
+
+        $this->resetPage(); 
     }
 
     public function store()
@@ -66,7 +59,6 @@ class ManageSchedules extends Component
         }
 
         $this->resetForm();
-        $this->loadSchedules();
         session()->flash('success', 'Schedule created successfully and seats associated!');
     }
 
@@ -78,16 +70,13 @@ class ManageSchedules extends Component
         $this->theatre_id = $schedule->theatre_id;
         $this->date = $schedule->date;
         $this->start_time = $schedule->start_time;
-        $this->end_time = $schedule->end_time;
         $this->is_active = $schedule->is_active;
         $this->isEditing = true;
     }
 
-
     public function update()
     {
         $this->start_time = date('H:i', strtotime($this->start_time));
-        $this->end_time = $this->end_time ? date('H:i', strtotime($this->end_time)) : null;
         $validatedData = $this->validate();
         
         $schedule = Schedule::findOrFail($this->scheduleId);
@@ -95,10 +84,8 @@ class ManageSchedules extends Component
         $schedule->update($validatedData);
 
         $this->resetForm();
-        $this->loadSchedules();
         session()->flash('success', 'Schedule updated successfully!');
     }
-
 
     public function confirmDelete($id)
     {
@@ -118,7 +105,6 @@ class ManageSchedules extends Component
         $schedule->delete();
 
         $this->reset(['confirmDeleteInput', 'deleteId', 'showModal']);
-        $this->loadSchedules();
         session()->flash('success', 'Schedule and associated seats deleted successfully!');
     }
 
@@ -129,7 +115,14 @@ class ManageSchedules extends Component
 
     public function render()
     {
-        return view('livewire.admin.schedules.manage-schedules');
+        $schedules = Schedule::with(['movie', 'theatre'])
+            ->whereHas('movie', fn($q) => $q->where('is_active', true))
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->paginate(3); // Use pagination with 10 items per page
+
+        return view('livewire.admin.schedules.manage-schedules', [
+            'schedules' => $schedules,
+        ]);
     }
 }
-

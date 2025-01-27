@@ -85,7 +85,9 @@
             @endforeach
         </tbody>
     </table>
-
+    <div class="mt-4">
+        {{ $schedules->links() }}
+    </div>
     <!-- Confirm Delete Modal -->
     @if ($showModal)
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

@@ -4,14 +4,15 @@ namespace App\Http\Livewire\Admin\Theatres;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 use App\Models\Cinema;
 use App\Models\Theatre;
 
 class ManageTheatres extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
-    public $theatres = [], $cinemas;
+    public $cinemas;
     public $name, $cinema_id, $type = '2D', $is_active = true, $screen_size, $sound_system, $image, $theatreId;
     public $showModal = false;
     public $confirmDeleteInput = '';
@@ -32,12 +33,7 @@ class ManageTheatres extends Component
     public function mount()
     {
         $this->cinemas = Cinema::all();
-        $this->loadTheatres();
-    }
-
-    public function loadTheatres()
-    {
-        $this->theatres = Theatre::with('cinema')->get();
+        $this->resetForm();
     }
 
     public function resetForm()
@@ -51,6 +47,8 @@ class ManageTheatres extends Component
         $this->image = null;
         $this->theatreId = null;
         $this->isEditing = false;
+
+        $this->resetPage(); 
     }
 
     public function store()
@@ -66,7 +64,6 @@ class ManageTheatres extends Component
             'sound_system' => $this->sound_system,
         ];
 
-        // Handle image upload
         if ($this->image) {
             $data['image_path'] = $this->image->store('theatres', 'public');
         }
@@ -74,7 +71,6 @@ class ManageTheatres extends Component
         Theatre::create($data);
 
         $this->resetForm();
-        $this->loadTheatres();
         session()->flash('success', 'Theatre created successfully!');
     }
 
@@ -106,7 +102,6 @@ class ManageTheatres extends Component
             'sound_system' => $this->sound_system,
         ];
 
-        // Handle image upload
         if ($this->image) {
             $data['image_path'] = $this->image->store('theatres', 'public');
         }
@@ -114,14 +109,7 @@ class ManageTheatres extends Component
         Theatre::findOrFail($this->theatreId)->update($data);
 
         $this->resetForm();
-        $this->loadTheatres();
         session()->flash('success', 'Theatre updated successfully!');
-    }
-
-    public function confirmDelete($id)
-    {
-        $this->showModal = true;
-        $this->deleteId = $id;
     }
 
     public function delete()
@@ -133,17 +121,13 @@ class ManageTheatres extends Component
 
         Theatre::findOrFail($this->deleteId)->delete();
         $this->reset(['confirmDeleteInput', 'deleteId', 'showModal']);
-        $this->loadTheatres();
         session()->flash('success', 'Theatre deleted successfully!');
-    }
-
-    public function closeModal()
-    {
-        $this->reset(['showModal', 'confirmDeleteInput', 'deleteId']);
     }
 
     public function render()
     {
-        return view('livewire.admin.theatres.manage-theatres');
+        return view('livewire.admin.theatres.manage-theatres', [
+            'theatres' => Theatre::with('cinema')->paginate(10) 
+        ]);
     }
 }

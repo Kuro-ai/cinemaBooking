@@ -114,6 +114,9 @@
             @endforeach
         </tbody>
     </table>
+    <div class="mt-4">
+        {{ $cinemas->links() }} <!-- Pagination links -->
+    </div>
     @if ($showModal)
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">

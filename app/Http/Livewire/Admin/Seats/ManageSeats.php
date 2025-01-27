@@ -5,12 +5,14 @@ namespace App\Http\Livewire\Admin\Seats;
 use Livewire\Component;
 use App\Models\Seat;
 use App\Models\Theatre;
+use Livewire\WithPagination;
 
 class ManageSeats extends Component
 {
-    public $seats;
+    use WithPagination;
+
     public $theatres;
-    public $seat_number, $theatre_id, $type = 'regular', $price, $is_available = true, $seatId;
+    public $seat_number, $theatre_id, $type = 'regular', $price, $seatId;
     public $isEditing = false;
     public $deleteId;
     public $showModal = false;
@@ -21,18 +23,11 @@ class ManageSeats extends Component
         'theatre_id' => 'required|exists:theatres,id',
         'type' => 'required|in:regular,vip,recliner',
         'price' => 'nullable|numeric|min:0',
-        'is_available' => 'boolean',
     ];
 
     public function mount()
     {
-        $this->loadSeats();
         $this->theatres = Theatre::all();
-    }
-
-    public function loadSeats()
-    {
-        $this->seats = Seat::with('theatre')->get();
     }
 
     public function resetForm()
@@ -41,17 +36,22 @@ class ManageSeats extends Component
         $this->theatre_id = '';
         $this->type = 'regular';
         $this->price = null;
-        $this->is_available = true;
         $this->seatId = null;
         $this->isEditing = false;
+
+        $this->resetPage(); // Reset pagination when resetting the form
     }
 
     public function store()
     {
         $this->validate();
-        Seat::create($this->validate());
+        Seat::create([
+            'seat_number' => $this->seat_number,
+            'theatre_id' => $this->theatre_id,
+            'type' => $this->type,
+            'price' => $this->price,
+        ]);
         $this->resetForm();
-        $this->loadSeats();
         session()->flash('success', 'Seat created successfully!');
     }
 
@@ -63,16 +63,23 @@ class ManageSeats extends Component
         $this->theatre_id = $seat->theatre_id;
         $this->type = $seat->type;
         $this->price = $seat->price;
-        $this->is_available = $seat->is_available;
         $this->isEditing = true;
     }
 
     public function update()
     {
         $this->validate();
-        Seat::findOrFail($this->seatId)->update($this->validate());
+
+        $seat = Seat::findOrFail($this->seatId);
+
+        $seat->update([
+            'seat_number' => $this->seat_number,
+            'theatre_id' => $this->theatre_id,
+            'type' => $this->type,
+            'price' => $this->price,
+        ]);
+
         $this->resetForm();
-        $this->loadSeats();
         session()->flash('success', 'Seat updated successfully!');
     }
 
@@ -92,7 +99,6 @@ class ManageSeats extends Component
     {
         if ($this->confirmDeleteInput === 'Delete Confirm') {
             Seat::findOrFail($this->deleteId)->delete();
-            $this->loadSeats();
             $this->showModal = false;
             session()->flash('success', 'Seat deleted successfully!');
         } else {
@@ -102,7 +108,8 @@ class ManageSeats extends Component
 
     public function render()
     {
-        return view('livewire.admin.seats.manage-seats');
+        return view('livewire.admin.seats.manage-seats', [
+            'seats' => Seat::with('theatre')->paginate(10), // Use pagination for seats
+        ]);
     }
 }
-
