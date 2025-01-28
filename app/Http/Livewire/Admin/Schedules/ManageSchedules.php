@@ -119,7 +119,7 @@ class ManageSchedules extends Component
             ->whereHas('movie', fn($q) => $q->where('is_active', true))
             ->orderBy('date')
             ->orderBy('start_time')
-            ->paginate(3); // Use pagination with 10 items per page
+            ->paginate(10); 
 
         return view('livewire.admin.schedules.manage-schedules', [
             'schedules' => $schedules,

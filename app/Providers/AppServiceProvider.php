@@ -25,8 +25,9 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('admin.movies.manage-movies', \App\Http\Livewire\Admin\Movies\ManageMovies::class);
         Livewire::component('admin.movies.manage-seats', \App\Http\Livewire\Admin\Seats\ManageSeats::class);
         Livewire::component('admin.schedules.manage-schedules', \App\Http\Livewire\Admin\Schedules\ManageSchedules::class);
-        Livewire::component('customer.movie-theatre-list', \App\Http\Livewire\Customer\MovieTheatreList::class);
+        Livewire::component('admin.foods.manage-foods', \App\Http\Livewire\Admin\Foods\ManageFoods::class);
 
+        Livewire::component('customer.movie-theatre-list', \App\Http\Livewire\Customer\MovieTheatreList::class);
         Livewire::component('customer.cinemas.cinemas-list', \App\Http\Livewire\Customer\Cinemas\CinemasList::class);
         Livewire::component('customer.theatres.cinema-details', \App\Http\Livewire\Customer\Theatres\CinemaDetails::class);
         Livewire::component('customer.movies.movies-list', \App\Http\Livewire\Customer\Movies\MoviesList::class);

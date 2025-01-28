@@ -48,6 +48,13 @@
                     </svg>
                     <span>Manage Schedules</span>
                 </a>
+                <a href="{{ route('admin.manage-foods') }}" 
+                   class="flex flex-col items-center justify-center w-44 h-44 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mb-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6H6m6 0h6" />
+                    </svg>
+                    <span>Manage Foods</span>
+                </a>
             </div>
         </div>
     </div>
