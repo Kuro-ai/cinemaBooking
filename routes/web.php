@@ -26,7 +26,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/movies', \App\Http\Livewire\Admin\Movies\ManageMovies::class)->name('admin.movies');
     Route::get('/admin/seats', \App\Http\Livewire\Admin\Seats\ManageSeats::class)->name('admin.seats');
     Route::get('/admin/manage-schedules', \App\Http\Livewire\Admin\Schedules\ManageSchedules::class)->name('admin.manage-schedules');
-    Route::get('/admin/manage-foods', \App\Http\Livewire\Admin\Foods\ManageFoods::class)->name('admin.manage-foods'); 
+    Route::get('/admin/manage-foods', \App\Http\Livewire\Admin\Foods\ManageFoods::class)->name('admin.manage-foods');
+    Route::get('/admin/manage-users', \App\Http\Livewire\Admin\ManageUsers::class)->name('admin.users');
 
     Route::resource('users', UserController::class);
     Route::resource('bookings', BookingController::class);

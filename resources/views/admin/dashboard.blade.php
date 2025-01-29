@@ -30,6 +30,13 @@
                     </svg>
                     <span>Manage Movies</span>
                 </a>
+                <a href="{{ route('admin.users') }}" 
+                   class="flex flex-col items-center justify-center w-44 h-44 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mb-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 15.75v1.5a2.25 2.25 0 002.25 2.25h1.5A2.25 2.25 0 0021 17.25v-7.5A2.25 2.25 0 0018.75 7.5h-1.5A2.25 2.25 0 0015 9.75v1.5m-6 7.5v1.5A2.25 2.25 0 009.75 21h1.5A2.25 2.25 0 0013.5 18.75v-7.5A2.25 2.25 0 0011.25 9h-1.5A2.25 2.25 0 007.5 11.25v1.5" />
+                    </svg>
+                    <span>Manage Users</span>
+                </a>
             </div>
 
             <!-- Bottom Row (2 Links in a Row) -->

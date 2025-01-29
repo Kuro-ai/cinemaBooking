@@ -30,8 +30,22 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'banned_until',
         'profile_photo_path',
     ];
+
+    protected $dates = [
+        'banned_until',
+    ];
+
+    protected $casts = [
+        'banned_until' => 'datetime',
+    ];
+    
+    public function getIsBannedAttribute()
+    {
+        return $this->banned_until && $this->banned_until->isFuture();
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -66,4 +80,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    
+    
 }
