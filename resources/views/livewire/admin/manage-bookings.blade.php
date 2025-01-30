@@ -3,7 +3,17 @@
 
     <input type="text" wire:model.debounce.500ms="search" placeholder="Search by customer name, email, movie, or booking code" 
            class="form-input bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md w-full mb-4">
-
+        @if (session()->has('success'))
+           <div class="dark:bg-green-100 border dark:border-green-400 dark:text-green-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
+               {{ session('success') }}
+           </div>
+       @endif
+   
+       @if (session()->has('error'))
+           <div class="dark:bg-red-100 border dark:border-red-400 dark:text-red-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
+               {{ session('error') }}
+           </div>
+       @endif
     <table class="table-auto w-full text-center text-gray-800 dark:text-gray-200 border-collapse">
         <thead class="bg-gray-300 dark:bg-gray-700">
             <tr>

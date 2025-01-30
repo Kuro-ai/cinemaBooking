@@ -44,7 +44,17 @@
             {{ $isEditing ? 'Update' : 'Create' }}
         </button>
     </form>
+    @if (session()->has('success'))
+        <div class="dark:bg-green-100 border dark:border-green-400 dark:text-green-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
+            {{ session('success') }}
+        </div>
+    @endif
 
+    @if (session()->has('error'))
+        <div class="dark:bg-red-100 border dark:border-red-400 dark:text-red-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
+            {{ session('error') }}
+        </div>
+    @endif
     <!-- Schedules Table -->
     <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
         <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">

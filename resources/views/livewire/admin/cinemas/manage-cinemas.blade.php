@@ -49,10 +49,10 @@
             <div class="mt-4 mb-4">
                 @if ($image)
                     <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
-                    <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+                    <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-52 h-46 rounded-md border border-gray-300 dark:border-gray-600">
                 @elseif ($isEditing && $existingImagePath)
                     <p class="text-gray-600 dark:text-gray-300 mb-2">Existing Image:</p>
-                    <img src="{{ asset('storage/' . $existingImagePath) }}" alt="Existing Image" class="w-48 h-48 rounded-md border border-gray-300 dark:border-gray-600">
+                    <img src="{{ asset('storage/' . $existingImagePath) }}" alt="Existing Image" class="w-52 h-46 rounded-md border border-gray-300 dark:border-gray-600">
                 @else
                     <p class="text-gray-600 dark:text-gray-300">No Image Available</p>
                 @endif
@@ -70,7 +70,17 @@
             </button>
         </form>
     </div>
+    @if (session()->has('success'))
+        <div class="dark:bg-green-100 border dark:border-green-400 dark:text-green-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
+            {{ session('success') }}
+        </div>
+    @endif
 
+    @if (session()->has('error'))
+        <div class="dark:bg-red-100 border dark:border-red-400 dark:text-red-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
+            {{ session('error') }}
+        </div>
+    @endif
     <table class="table-auto w-full text-center text-gray-800 dark:text-gray-200 border-collapse">
         <thead class="bg-gray-300 dark:bg-gray-700">
             <tr>
@@ -89,7 +99,7 @@
                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                     <td class="border border-gray-400 dark:border-gray-600 px-4 py-2">
                         @if($cinema->image_path)
-                            <img src="{{ asset('storage/' . $cinema->image_path) }}" alt="Cinema Image" class="w-16 h-16 rounded-md">
+                            <img src="{{ asset('storage/' . $cinema->image_path) }}" alt="Cinema Image" class="w-22 h-16 rounded-md">
                         @else
                             <span>No Image</span>
                         @endif
