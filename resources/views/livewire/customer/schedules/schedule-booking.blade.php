@@ -6,7 +6,7 @@
         <ul>
             @foreach ($schedules as $schedule)
                 <li>
-                    {{ $schedule->date }} ({{ $schedule->start_time }} - {{ $schedule->end_time }})
+                    {{ $schedule->date }} ({{ $schedule->start_time }})
                     <button wire:click="loadSeats({{ $schedule->id }})" class="bg-blue-500 text-white px-4 py-2 rounded-md">
                         View Seats
                     </button>
@@ -24,7 +24,7 @@
                 @foreach ($availableSeats as $seat)
                     <label>
                         <input type="checkbox" wire:model="selectedSeats" value="{{ $seat->id }}">
-                        Seat {{ $seat->number }}
+                        Seat {{ $seat->seat_number }}
                     </label>
                 @endforeach
             </div>

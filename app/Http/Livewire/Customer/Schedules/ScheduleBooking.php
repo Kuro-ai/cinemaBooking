@@ -85,20 +85,22 @@ class ScheduleBooking extends Component
         $schedule = Schedule::findOrFail($this->selectedSchedule);
 
         // Mark seats as booked in the pivot table
-        foreach ($this->selectedSeats as $seat_id) {
-            $schedule->seats()->updateExistingPivot($seat_id, ['is_available' => false]);
-        }
+        // foreach ($this->selectedSeats as $seat_id) {
+        //     $schedule->seats()->updateExistingPivot($seat_id, ['is_available' => false]);
+        // }
 
         // Create a booking record
+
         Booking::create([
             'user_id' => \Illuminate\Support\Facades\Auth::user()->id,
             'schedule_id' => $this->selectedSchedule,
-            'booking_code' => 'BOOK-' . strtoupper(Str::random(6)),
+            'booking_code' => 'BK-' . strtoupper(Str::random(6)),
             'total_seats' => count($this->selectedSeats),
-            'total_price' => $schedule->price * count($this->selectedSeats),
+            'total_price' => Seat::findOrFail($this->selectedSeats[0])->price * count($this->selectedSeats),
             'payment_type' => null,
             'payment_date' => null,
             'status' => 'booked',
+            'seat_numbers' => implode(',', Seat::whereIn('id', $this->selectedSeats)->pluck('seat_number')->toArray()),
         ]);
 
         // Reset state and show success message
@@ -120,20 +122,22 @@ class ScheduleBooking extends Component
         $schedule = Schedule::findOrFail($this->selectedSchedule);
 
         // Mark seats as purchased in the pivot table
-        foreach ($this->selectedSeats as $seat_id) {
-            $schedule->seats()->updateExistingPivot($seat_id, ['is_available' => false]);
-        }
+        // foreach ($this->selectedSeats as $seat_id) {
+        //     $schedule->seats()->updateExistingPivot($seat_id, ['is_available' => false]);
+        // }
 
         // Create a purchase record
+
         Booking::create([
             'user_id' => \Illuminate\Support\Facades\Auth::user()->id,
             'schedule_id' => $this->selectedSchedule,
             'booking_code' => 'PUR-' . strtoupper(Str::random(6)),
             'total_seats' => count($this->selectedSeats),
-            'total_price' => $schedule->price * count($this->selectedSeats),
+            'total_price' => Seat::findOrFail($this->selectedSeats[0])->price * count($this->selectedSeats),
             'payment_type' => $this->paymentType,
             'payment_date' => now(),
             'status' => 'purchased',
+           'seat_numbers' => implode(',', Seat::whereIn('id', $this->selectedSeats)->pluck('seat_number')->toArray()),
         ]);
 
         // Reset state and show success message

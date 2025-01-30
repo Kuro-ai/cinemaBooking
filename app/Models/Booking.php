@@ -23,7 +23,13 @@ class Booking extends Model
         'payment_type',
         'payment_date',
         'status',
+        'seat_numbers',
     ];
+
+    protected $casts = [
+        'seat_numbers' => 'array',
+    ];
+    
 
     /**
      * Relationship with User.

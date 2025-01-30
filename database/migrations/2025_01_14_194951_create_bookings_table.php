@@ -19,8 +19,9 @@ return new class extends Migration
             $table->integer('total_seats');                                          
             $table->decimal('total_price', 8, 2);    
             $table->string('payment_type')->nullable();
-            $table->timestamp('payment_date')->nullable();                                
-            $table->enum('status', ['immediate', 'post_booking']); 
+            $table->timestamp('payment_date')->nullable();     
+            $table->text('seat_numbers')->default('[]')->nullable();                        
+            $table->enum('status', ['booked', 'purchased', 'refunded']);
             $table->timestamps();                                                
         });
         
