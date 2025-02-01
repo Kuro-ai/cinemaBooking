@@ -15,12 +15,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    Route::resource('cinemas', CinemaController::class);
-    Route::resource('theatres', TheatreController::class);
-    Route::resource('movies', MovieController::class);
-    Route::resource('schedules', ScheduleController::class);
-    Route::resource('seats', SeatController::class);
-    
     Route::get('/admin/cinemas', \App\Http\Livewire\Admin\Cinemas\ManageCinemas::class)->name('admin.cinemas');
     Route::get('/admin/theatres', \App\Http\Livewire\Admin\Theatres\ManageTheatres::class)->name('admin.theatres');
     Route::get('/admin/movies', \App\Http\Livewire\Admin\Movies\ManageMovies::class)->name('admin.movies');
@@ -30,13 +24,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/manage-users', \App\Http\Livewire\Admin\ManageUsers::class)->name('admin.users');
     Route::get('/admin/manage-bookings', \App\Http\Livewire\Admin\ManageBookings::class)->name('admin.bookings');
 
-    Route::resource('users', UserController::class);
-    Route::resource('bookings', BookingController::class);
-    //                                    ^
-    //Admin needs to be able to view them |
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/customer/dashboard', function () {
         return view('customer.dashboard');
     })->name('customer.dashboard');
@@ -44,7 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cinemas', \App\Http\Livewire\Customer\Cinemas\CinemasList::class)->name('cinemas.list');
     Route::get('/cinema/{cinema}', \App\Http\Livewire\Customer\Theatres\CinemaDetails::class)->name('cinema.details');
     Route::get('/customer/booking/{schedule}', [App\Http\Controllers\BookingController::class, 'create'])
-    ->name('customer.booking');
+        ->name('customer.booking');
     Route::post('/customer/booking/store', [App\Http\Controllers\BookingController::class, 'store'])
         ->name('bookings.store');
     Route::get('/customer/movie-theatre-list', \App\Http\Livewire\Customer\MovieTheatreList::class)->name('customer.movie-theatre-list');

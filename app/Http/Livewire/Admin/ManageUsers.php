@@ -77,7 +77,7 @@ class ManageUsers extends Component
 
         $user = User::findOrFail($this->selectedUserId);
         $user->update([
-            'banned_until' => Carbon::now()->addDays((int) $this->banDuration),
+            'banned_until' => Carbon::now('Asia/Yangon')->addDays((int) $this->banDuration),
         ]);
 
         $this->reset(['selectedUserId', 'banDuration']);
