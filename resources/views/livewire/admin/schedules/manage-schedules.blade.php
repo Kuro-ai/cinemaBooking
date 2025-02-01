@@ -26,8 +26,6 @@
             <input type="time" 
                    wire:model.defer="start_time" 
                    class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md" required>
-
-           
          </div>
 
         <div>
@@ -55,6 +53,31 @@
             {{ session('error') }}
         </div>
     @endif
+    <form class="mt-4 mb-4" role="search">
+        <div class="flex w-full space-x-2 mb-4">
+            <input type="text" wire:model.live="search" placeholder="Search by Movie"
+               class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+            <input type="date" wire:model.live="searchDate"
+               class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+        </div>
+        <div class="flex w-full space-x-2">
+            <select wire:model.live="filterTheatre"
+                    class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+                <option value="">All Theatres</option>
+                @foreach ($theatres as $theatre)
+                    <option value="{{ $theatre->id }}">{{ $theatre->name }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="filterStatus"
+                    class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+                <option value="">All Status</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+            </select>
+        </div>
+    </form>
+
     <!-- Schedules Table -->
     <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
         <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
@@ -134,3 +157,10 @@
 @endif
 
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.querySelector('input[type="date"]');
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.setAttribute("min", today);
+    });
+</script>

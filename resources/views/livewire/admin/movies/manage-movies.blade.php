@@ -79,6 +79,18 @@
             {{ session('error') }}
         </div>
     @endif
+
+    <form class="flex w-full space-x-2 mt-4 mb-4" role="search">
+        <input type="text" wire:model.live="search" placeholder="Search by Title or Director" 
+        class="form-control w-2/3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+        
+        <select wire:model.live="filterStatus" class="form-control w-1/3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+            <option value="">All</option>
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+        </select>   
+    </form>
+    
     <!-- Movie Table -->
     <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
         <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">

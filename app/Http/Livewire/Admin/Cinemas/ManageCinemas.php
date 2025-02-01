@@ -14,6 +14,8 @@ class ManageCinemas extends Component
     public $name, $location, $city, $contact_number, $email, $is_active, $cinemaId, $image;
     public $isEditing = false, $showModal = false, $confirmDeleteInput = ''; 
     public $existingImagePath;
+    public $search = ''; 
+    public $filterActive = '';
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -39,7 +41,27 @@ class ManageCinemas extends Component
 
     public function loadCinemas()
     {
-        return Cinema::paginate(10);
+        return Cinema::where(function ($query) {
+                if (!empty($this->search)) {
+                    $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->search) . '%'])
+                        ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($this->search) . '%']);
+                }
+
+                if ($this->filterActive !== '') {
+                    $query->where('is_active', $this->filterActive);
+                }
+            })
+            ->paginate(10);
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage(); 
+    }
+
+    public function updatedFilterActive()
+    {
+        $this->resetPage(); 
     }
 
     public function resetForm()

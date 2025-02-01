@@ -62,6 +62,25 @@
             {{ session('error') }}
         </div>
     @endif
+    <form class="mt-4 mb-4" role="search">
+        <input type="text" wire:model.live="search" placeholder="Search by Name"  class="form-control w-full bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2 mb-4" >
+    
+        <div class="flex w-full space-x-2">
+            <select wire:model.live="filterCinema"  class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+                <option value="">All Cinemas</option>
+                @foreach($cinemas as $cinema)
+                    <option value="{{ $cinema->id }}">{{ $cinema->name }}</option>
+                @endforeach
+            </select>
+    
+            <select wire:model.live="filterActive"  class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+                <option value="">All Status</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+            </select>
+        </div>
+    </form>
+    
     <!-- Theatres Table -->
     <table class="table-auto w-full mt-8 bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 rounded-lg">
         <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
@@ -82,7 +101,7 @@
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $theatre->type }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">
                         @if ($theatre->image_path)
-                            <img src="{{ Storage::url($theatre->image_path) }}" alt="Image" class="w-22 h-16 rounded-md">
+                            <img src="{{ Storage::url($theatre->image_path) }}" alt="Image" class="w-22 h-16 rounded-md mx-auto">
                         @else
                             No Image
                         @endif

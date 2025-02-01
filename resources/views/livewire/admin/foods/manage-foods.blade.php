@@ -49,14 +49,7 @@
             </button>
         </form>
     </div>
-    <div class="flex justify-between mb-4">
-        <input 
-            type="text" 
-            wire:model.debounce.300ms="search" 
-            placeholder="Search foods..." 
-            class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md"
-        >
-    </div>
+
     @if (session()->has('success'))
         <div class="dark:bg-green-100 border dark:border-green-400 dark:text-green-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
             {{ session('success') }}
@@ -68,6 +61,23 @@
             {{ session('error') }}
         </div>
     @endif
+
+    <form class="flex w-full space-x-2 mb-4" role="search">
+        <input 
+            type="text" 
+            wire:model.live="search" 
+            placeholder="Search by Name" 
+            class="form-control w-2/3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2" >
+
+        <select 
+            wire:model.live="typeFilter" 
+            class="form-control w-1/3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+            <option value="">All Types</option>
+            <option value="Food">Food</option>
+            <option value="Drink">Drink</option>
+        </select>
+    </form>
+
     <table class="table-auto w-full text-center text-gray-800 dark:text-gray-200 border-collapse">
         <thead class="bg-gray-300 dark:bg-gray-700">
             <tr>

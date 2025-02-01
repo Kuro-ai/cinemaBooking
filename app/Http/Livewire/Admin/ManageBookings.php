@@ -5,19 +5,38 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Booking;
+use App\Models\Movie;
 
 class ManageBookings extends Component
 {
     use WithPagination;
 
     public $search = ''; 
-    public $perPage = 10; 
+    public $movieFilter = '';
+    public $dateFilter = '';
+    public $statusFilter = '';
+    public $perPage = 10;
 
-    protected $queryString = ['search']; 
+    protected $queryString = ['search', 'movieFilter', 'dateFilter', 'statusFilter'];
 
     public function updatingSearch()
     {
-        $this->resetPage(); 
+        $this->resetPage();
+    }
+
+    public function updatingMovieFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
     }
 
     public function refund($bookingId)
@@ -32,16 +51,33 @@ class ManageBookings extends Component
     {
         $bookings = Booking::with(['user', 'schedule.movie'])
             ->whereHas('user', function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%');
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->search) . '%'])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($this->search) . '%']);
             })
-            ->orWhereHas('schedule.movie', function ($query) {
-                $query->where('title', 'like', '%' . $this->search . '%');
-            })
-            ->orWhere('booking_code', 'like', '%' . $this->search . '%')
-            ->orWhere('status', 'like', '%' . $this->search . '%')
-            ->paginate($this->perPage);
+            ->orWhere('booking_code', 'LIKE', '%' . $this->search . '%') 
+            ->orWhere('status', 'LIKE', '%' . $this->search . '%'); 
 
-        return view('livewire.admin.manage-bookings', compact('bookings'));
+        if ($this->movieFilter) {
+            $bookings->whereHas('schedule.movie', function ($query) {
+                $query->where('id', $this->movieFilter);
+            });
+        }
+
+        if ($this->dateFilter) {
+            $bookings->whereHas('schedule', function ($query) {
+                $query->whereDate('date', '=', $this->dateFilter);
+            });
+        }
+
+        if ($this->statusFilter) {
+            $bookings->where('status', $this->statusFilter);
+        }
+
+        $bookings = $bookings->paginate($this->perPage);
+
+        $movies = Movie::orderBy('title')->get();
+
+        return view('livewire.admin.manage-bookings', compact('bookings', 'movies'));
     }
+
 }

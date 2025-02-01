@@ -17,6 +17,9 @@ class ManageSeats extends Component
     public $deleteId;
     public $showModal = false;
     public $confirmDeleteInput = '';
+    public $search = '';
+    public $filterType = '';
+    public $filterTheatre = '';
 
     protected $rules = [
         'seat_number' => 'required|string|max:10',
@@ -106,10 +109,39 @@ class ManageSeats extends Component
         }
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterTheatre()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
+        $query = Seat::with('theatre');
+
+        if ($this->search) {
+            $query->whereRaw('LOWER(seat_number) LIKE ?', ['%' . strtolower($this->search) . '%']);
+        }        
+
+        if ($this->filterType) {
+            $query->where('type', $this->filterType);
+        }
+
+        if ($this->filterTheatre) {
+            $query->where('theatre_id', $this->filterTheatre);
+        }
+
         return view('livewire.admin.seats.manage-seats', [
-            'seats' => Seat::with('theatre')->paginate(10), // Use pagination for seats
+            'seats' => $query->paginate(10),
         ]);
     }
 }

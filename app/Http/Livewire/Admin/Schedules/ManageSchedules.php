@@ -19,6 +19,10 @@ class ManageSchedules extends Component
     public $deleteId;
     public $showModal = false;
     public $isEditing = false;
+    public $search = ''; 
+    public $searchDate = '';
+    public $filterTheatre = '';
+    public $filterStatus = '';
 
     protected $rules = [
         'movie_id' => 'required|exists:movies,id',
@@ -113,13 +117,47 @@ class ManageSchedules extends Component
         $this->reset(['showModal', 'confirmDeleteInput', 'deleteId']);
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterTheatre()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDate()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $schedules = Schedule::with(['movie', 'theatre'])
-            ->whereHas('movie', fn($q) => $q->where('is_active', true))
+            ->whereHas('movie', function ($query) {
+                $query->where('is_active', true);
+                if ($this->search) {
+                    $query->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($this->search) . '%']);
+                }
+            })
+            ->when($this->filterTheatre, function ($query) {
+                $query->where('theatre_id', $this->filterTheatre);
+            })
+            ->when($this->filterStatus !== '', function ($query) {
+                $query->where('is_active', $this->filterStatus);
+            })
+            ->when($this->searchDate, function ($query) {
+                $query->whereDate('date', $this->searchDate);
+            })
             ->orderBy('date')
             ->orderBy('start_time')
-            ->paginate(10); 
+            ->paginate(10);
 
         return view('livewire.admin.schedules.manage-schedules', [
             'schedules' => $schedules,

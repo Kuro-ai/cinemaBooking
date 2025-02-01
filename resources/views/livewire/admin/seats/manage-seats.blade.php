@@ -53,6 +53,35 @@
             {{ session('error') }}
         </div>
     @endif
+    <form class="mt-4 mb-4" role="search">
+        <input 
+            type="text" 
+            wire:model.live="search" 
+            placeholder="Search by Seat Number" 
+            class="form-control w-full bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2 mb-4" >
+        
+        <div class="flex w-full space-x-2">
+            <select 
+                wire:model.live="filterType" 
+                class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+                <option value="">Select Seat Type</option>
+                <option value="regular">Regular</option>
+                <option value="vip">VIP</option>
+                <option value="recliner">Recliner</option>
+            </select>
+        
+            <select 
+                wire:model.live="filterTheatre" 
+                class="form-control w-1/2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+                <option value="">Select Theatre</option>
+                @foreach ($theatres as $theatre)
+                    <option value="{{ $theatre->id }}">{{ $theatre->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </form>
+    
+
     <table class="table-auto w-full mt-6 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-collapse border border-gray-300 dark:border-gray-600">
         <thead>
             <tr class="bg-gray-200 dark:bg-gray-800 text-center">

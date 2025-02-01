@@ -15,6 +15,7 @@ class ManageFoods extends Component
     public $name, $image, $type, $foodId, $existingImagePath;
     public $isEditing = false, $showModal = false, $confirmDeleteInput = '';
     public $search = '';
+    public $typeFilter = '';
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -25,11 +26,29 @@ class ManageFoods extends Component
 
     public function render()
     {
+        $foods = Food::query();
+
+        if ($this->search) {
+            $foods->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($this->search) . '%']);
+        }        
+
+        if ($this->typeFilter) {
+            $foods->where('type', $this->typeFilter);
+        }
+
         return view('livewire.admin.foods.manage-foods', [
-            'foods' => Food::where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('type', 'like', '%' . $this->search . '%')
-                ->paginate(10),
+            'foods' => $foods->paginate(10),
         ]);
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedTypeFilter()
+    {
+        $this->resetPage();
     }
 
     public function resetForm()

@@ -14,6 +14,8 @@ class ManageMovies extends Component
     public $title, $genre, $director, $duration, $language, $trailer_url, $description, $is_active;
     public $movieId, $image, $existingImagePath;
     public $isEditing = false, $showModal = false, $deleteId, $confirmDeleteInput = '';
+    public $search = '';
+    public $filterStatus = '';
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -108,6 +110,7 @@ class ManageMovies extends Component
         } else {
             session()->flash('error', 'You must type "Delete Confirm" to proceed.');
         }
+        $this->deleteId = null;
     }
 
     public function resetForm()
@@ -128,10 +131,31 @@ class ManageMovies extends Component
         $this->resetPage(); 
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
+        $query = Movie::query();
+
+        if ($this->search) {
+            $query->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($this->search) . '%'])
+                  ->orWhereRaw('LOWER(director) LIKE ?', ['%' . strtolower($this->search) . '%']);
+        }        
+
+        if ($this->filterStatus !== '') {
+            $query->where('is_active', $this->filterStatus);
+        }
+
         return view('livewire.admin.movies.manage-movies', [
-            'movies' => Movie::paginate(10),
+            'movies' => $query->paginate(10),
         ]);
     }
 }

@@ -19,6 +19,9 @@ class ManageTheatres extends Component
     public $deleteId;
     public $isEditing = false;
     public $existingImagePath;
+    public $search = '';
+    public $filterCinema = '';
+    public $filterActive = '';
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -124,10 +127,38 @@ class ManageTheatres extends Component
         session()->flash('success', 'Theatre deleted successfully!');
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCinema()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterActive()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
+        $searchTerm = '%' . strtolower($this->search) . '%';
+
+        $theatres = Theatre::with('cinema')
+            ->whereRaw('LOWER(name) LIKE ?', [$searchTerm]);
+
+        if (!empty($this->filterCinema)) {
+            $theatres->where('cinema_id', $this->filterCinema);
+        }
+
+        if ($this->filterActive !== '') {
+            $theatres->where('is_active', $this->filterActive);
+        }
+
         return view('livewire.admin.theatres.manage-theatres', [
-            'theatres' => Theatre::with('cinema')->paginate(10) 
+            'theatres' => $theatres->paginate(10),
         ]);
     }
 }

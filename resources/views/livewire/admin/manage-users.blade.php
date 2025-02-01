@@ -1,14 +1,6 @@
 <div class="p-6 bg-gray-100 dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-md">
     <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Manage Users</h2>
 
-    <div class="mb-4">
-        <input
-            type="text"
-            wire:model="search"
-            placeholder="Search by name or email..."
-            class="form-input w-full p-2 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500"
-        />
-    </div>
     @if (session()->has('success'))
         <div class="dark:bg-green-100 border dark:border-green-400 dark:text-green-700 px-4 py-3 rounded relative mt-3 mb-3 text-center">
             {{ session('success') }}
@@ -21,6 +13,19 @@
         </div>
     @endif
     
+    <form class="flex w-full space-x-2 mb-4" role="search">
+        <input wire:model.live="search" 
+            class="form-control w-2/3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2" 
+            type="search" placeholder="Search by Name or Email" aria-label="Search">
+    
+        <select wire:model.live="filterBanned" 
+            class="form-control w-1/3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-500 px-3 py-2">
+            <option value="">All Users</option>
+            <option value="banned">Banned Users</option>
+            <option value="unbanned">Unbanned Users</option>
+        </select>
+    </form>
+ 
     <table class="table-auto w-full text-center text-gray-800 dark:text-gray-200 border-collapse">
         <thead class="bg-gray-300 dark:bg-gray-700">
             <tr>
