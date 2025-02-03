@@ -22,6 +22,7 @@ class Movie extends Model
         'duration',
         'language',
         'trailer_url',
+        'release_date',
         'is_active',
         'image_path',
     ];

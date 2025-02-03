@@ -80,13 +80,16 @@
                     <td class="border border-gray-400 px-4 py-2">
                         @if ($booking->status === 'refunded')
                             <span class="text-gray-500">Refunded</span>
+                        @elseif ($booking->status === 'booked')
+                            <button wire:click="confirmBooking({{ $booking->id }})" class="bg-green-500 text-white px-2 py-1 rounded">
+                                Confirm
+                            </button>
                         @else
                             <button wire:click="refund({{ $booking->id }})" class="bg-blue-500 text-white px-2 py-1 rounded">
                                 Refund
                             </button>
                         @endif
-                    </td>
-                    
+                    </td>         
                 </tr>
             @empty
                 <tr>

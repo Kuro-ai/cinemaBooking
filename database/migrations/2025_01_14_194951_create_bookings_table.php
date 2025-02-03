@@ -24,7 +24,6 @@ return new class extends Migration
             $table->enum('status', ['booked', 'purchased', 'refunded']);
             $table->timestamps();                                                
         });
-        
     }
 
     /**

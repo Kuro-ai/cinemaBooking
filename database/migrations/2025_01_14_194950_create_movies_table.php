@@ -21,9 +21,10 @@ return new class extends Migration
             $table->string('language')->default('English');
             $table->string('trailer_url')->nullable();
             $table->string('image_path')->nullable();
+            $table->date('release_date')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            $table->unique(['title', 'release_date']);
+            $table->unique(['title']);
         });
     }
 

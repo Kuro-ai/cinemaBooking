@@ -33,19 +33,32 @@
                    placeholder="Trailer URL" 
                    class="form-input bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md">
         </div>
+        <div class="flex space-x-4">
+            <!-- Release Date Input -->
+            <div class="w-1/2">
+                <input type="date" 
+                       wire:model.defer="release_date" 
+                       placeholder="Release Date" 
+                       class="form-input w-full bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md">
+            </div>
+        
+            <!-- Image Upload Input -->
+            <div class="w-1/2">
+                <input type="file" 
+                       wire:model="image" 
+                       id="image"
+                       class="form-input w-full bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md">
+                @error('image') 
+                    <span class="text-red-500 text-sm">{{ $message }}</span> 
+                @enderror
+            </div>
+        </div>
+        
         <textarea wire:model.defer="description" 
                   placeholder="Description" 
                   class="form-textarea bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-md w-full"></textarea>
         
-        <div>
-            <input type="file" 
-                   wire:model="image" 
-                   id="image"
-                   class="form-input bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 rounded-md">
-            @error('image') 
-                <span class="text-red-500">{{ $message }}</span> 
-            @enderror
-        </div>
+        
         <div>
             @if ($image)
                 <p class="text-gray-600 dark:text-gray-300 mb-2">Image Preview:</p>
@@ -100,6 +113,7 @@
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Image</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Director</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Duration</th>
+                <th class="px-4 py-2 text-center border dark:border-gray-600">Release Date</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Status</th>
                 <th class="px-4 py-2 text-center border dark:border-gray-600">Actions</th>
             </tr>
@@ -118,6 +132,9 @@
                     </td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->director }}</td>
                     <td class="px-4 py-2 border dark:border-gray-600">{{ $movie->duration }}</td>
+                    <td class="px-4 py-2 border dark:border-gray-600">
+                        {{ $movie->release_date ? \Carbon\Carbon::parse($movie->release_date)->format('M d, Y') : 'N/A' }}
+                    </td>                    
                     <td class="px-4 py-2 border dark:border-gray-600">
                         @if ($movie->is_active)
                             <span class="text-green-600 dark:text-green-400 font-semibold">Active</span>

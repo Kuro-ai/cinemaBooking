@@ -10,6 +10,8 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -41,5 +43,27 @@
         @stack('modals')
 
         @livewireScripts
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.swiper-container').forEach((el) => {
+                    new Swiper(el, {
+                        slidesPerView: 3,
+                        spaceBetween: 20,
+                        navigation: {
+                            nextEl: el.parentElement.querySelector('.swiper-button-next'),
+                            prevEl: el.parentElement.querySelector('.swiper-button-prev'),
+                        },
+                        mousewheel: {
+                            invert: false,
+                        },
+                        breakpoints: {
+                            640: { slidesPerView: 1 },
+                            768: { slidesPerView: 2 },
+                            1024: { slidesPerView: 3 },
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

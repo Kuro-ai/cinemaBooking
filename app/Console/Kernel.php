@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('users:unban-expired')->hourly();
+        $schedule->command('bookings:cancel-unpaid')->hourly();
     }
 
     /**
