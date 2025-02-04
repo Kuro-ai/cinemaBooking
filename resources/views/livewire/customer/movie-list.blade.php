@@ -2,49 +2,61 @@
     <!-- Movie List Section -->
     <div class="max-w-6xl mx-auto p-6">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Movies</h3>
-    
+        <form class="max-w-lg mx-auto mb-6" role="search">
+            <input 
+                type="text" 
+                wire:model.live="search"
+                placeholder="🔍 Search by movie title..." 
+                class="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-500"
+            />
+        </form>
         @foreach([['Now Showing', $nowShowing], ['Upcoming Movies', $upcomingMovies]] as [$category, $movies])
             @if(!empty($movies) && count($movies) > 0 && !$selectedMovie)
                 <div class="mb-8">
                     <h4 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">{{ $category }}</h4>
-                    <div class="relative">
+                    <div class="relative ">
                         <div class="swiper-container overflow-hidden">
-                            <div class="swiper-wrapper">
+                            <div class="swiper-wrapper ">
                                 @foreach($movies as $movie)
-                                    <div class="swiper-slide bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md dark:shadow-lg text-center relative cursor-pointer" wire:click="selectMovie({{ $movie->id }})">
-                                        <!-- Movie Poster -->
-                                        <div class="relative w-full h-56 rounded-md overflow-hidden">
-                                            @if ($movie->image_path)
-                                                <img src="{{ asset('storage/' . $movie->image_path) }}" alt="{{ $movie->title }}" class="w-full h-full object-cover">
-                                            @else
-                                                <div class="w-full h-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
-                                                    No Image Available
-                                                </div>
-                                            @endif
-                                            <!-- Language Tag (Bottom Left) -->
-                                            <span class="absolute bottom-2 left-2 bg-gray-900 text-white text-xs px-2 py-1 rounded-md dark:bg-gray-100 dark:text-gray-900">
-                                                {{ $movie->language }}
-                                            </span>
-                                        </div>
-                                        <!-- Movie Year, Duration, and Genre (Above Title) -->
-                                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                            {{ \Carbon\Carbon::parse($movie->created_at)->year }} | 
-                                            @if (!empty($movie->duration))
-                                                @php
-                                                    // Split the duration into hours and minutes
-                                                    $durationParts = explode(':', $movie->duration);
-                                                    $hours = isset($durationParts[0]) ? $durationParts[0] . 'h' : '0h';
-                                                    $minutes = isset($durationParts[1]) ? $durationParts[1] . 'm' : '0m';
-                                                @endphp
-                                                {{ $hours }} {{ $minutes }},
-                                            @else
-                                                N/A,
-                                            @endif
-                                            {{ $movie->genre }}
-                                        </p>
-                                        <!-- Movie Title -->
-                                        <p class="mt-1 text-center font-medium text-gray-900 dark:text-gray-100">{{ $movie->title }}</p>
-                                    </div>
+                                <div class="swiper-slide bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md dark:shadow-lg text-center relative cursor-pointer !w-auto flex-shrink-0"
+                                wire:click="selectMovie({{ $movie->id }})">
+                               <!-- Movie Poster -->
+                               <div class="relative w-full max-w-[200px] aspect-[2/3] rounded-md overflow-hidden mx-auto">
+                                   @if ($movie->image_path)
+                                       <img src="{{ asset('storage/' . $movie->image_path) }}" 
+                                            alt="{{ $movie->title }}" 
+                                            class="w-full h-full object-cover object-center">
+                                   @else
+                                       <div class="w-full h-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                                           No Image Available
+                                       </div>
+                                   @endif
+                                   <!-- Language Tag (Bottom Left) -->
+                                   <span class="absolute bottom-2 left-2 bg-gray-900 text-white text-xs px-2 py-1 rounded-md dark:bg-gray-100 dark:text-gray-900">
+                                       {{ $movie->language }}
+                                   </span>
+                               </div>
+                           
+                               <!-- Movie Info -->
+                               <div class="w-full max-w-[200px] mx-auto">
+                                   <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::parse($movie->created_at)->year }} | 
+                                       @if (!empty($movie->duration))
+                                           @php
+                                               $durationParts = explode(':', $movie->duration);
+                                               $hours = isset($durationParts[0]) ? $durationParts[0] . 'h' : '0h';
+                                               $minutes = isset($durationParts[1]) ? $durationParts[1] . 'm' : '0m';
+                                           @endphp
+                                           {{ $hours }} {{ $minutes }},
+                                       @else
+                                           N/A,
+                                       @endif
+                                       {{ $movie->genre }}
+                                   </p>
+                                   <p class="mt-1 text-center font-medium text-gray-900 dark:text-gray-100">{{ $movie->title }}</p>
+                               </div>
+                           </div>
+                           
                                 @endforeach
                             </div>
                         </div>

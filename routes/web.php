@@ -26,11 +26,10 @@ Route::middleware(['auth', 'customer'])->group(function () {
 
    // web.php
     Route::get('/movies', \App\Livewire\Customer\MovieList::class)->name('movies.index');
-    Route::get('/theatres/{movieId}', \App\Livewire\Customer\TheatreList::class)->name('theatres.index');
-    Route::get('/seats/{scheduleId}', \App\Livewire\Customer\SeatSelection::class)->name('seats.index');
     Route::get('/booking/{bookingId}', \App\Livewire\Customer\BookingPage::class)->name('booking.index');
     Route::get('/foods', \App\Livewire\Customer\FoodShowcase::class)->name('foods.index');
     Route::get('/movie/{movieId}/booking', \App\Livewire\Customer\BookingPage::class)->name('customer.booking');
+    Route::get('/tickets', \App\Livewire\Customer\CustomerTickets::class)->name('customer.tickets');
 });
 
 Route::get('/', function () {

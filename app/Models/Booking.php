@@ -49,7 +49,17 @@ class Booking extends Model
 
     public function seats()
     {
-        return $this->belongsToMany(Seat::class, 'booking_seat');
+        return $this->hasManyThrough(Seat::class, ScheduleSeat::class, 'schedule_id', 'id', 'schedule_id', 'seat_id');
+    }
+
+    public function theatre()
+    {
+        return $this->schedule->theatre();
+    }
+
+    public function movie()
+    {
+        return $this->schedule->movie();  
     }
 
 }

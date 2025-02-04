@@ -38,17 +38,29 @@ class BookingPage extends Component
     public function loadSeats()
     {
         $seats = ScheduleSeat::where('schedule_id', $this->selectedSchedule->id)
-            ->with('seat') // Ensure seat details are loaded
-            ->orderBy('seat_id') // Order by seat ID for proper alignment
+            ->with('seat')
+            ->orderBy('seat_id')
             ->get();
 
         $this->seats = [];
 
         foreach ($seats as $seat) {
-            $rowLabel = substr($seat->seat->seat_number, 0, 1); // Extract row letter (A, B, C...)
+            $rowLabel = substr($seat->seat->seat_number, 0, 1);
+
+            // Assign border color based on seat type
+            $borderColor = match ($seat->seat->type) {
+                'regular' => 'border-blue-500',
+                'recliner' => 'border-purple-500',
+                'vip' => 'border-yellow-500',
+                // default => 'border-gray-300',
+            };
+
+            $seat->border_color = $borderColor; // Add new property
+
             $this->seats[$rowLabel][] = $seat;
         }
     }
+
 
     public function toggleSeat($seatId)
     {
@@ -124,7 +136,7 @@ class BookingPage extends Component
 
             DB::commit();
 
-            session()->flash('success', $type == 'buy' ? 'Tickets Purchased!' : 'Seats Booked! Complete payment before the deadline.');
+            session()->flash('success', $type == 'buy' ? 'Tickets Purchased! Check your ticket code in the tickets for successful transaction!' : 'Seats Booked! Complete payment before the deadline using the ticket code in the tickets.');
             return redirect()->route('customer.dashboard');
 
         } catch (\Exception $e) {

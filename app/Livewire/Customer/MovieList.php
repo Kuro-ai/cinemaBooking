@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Customer;
 
 use Livewire\Component;
@@ -12,6 +11,7 @@ class MovieList extends Component
     public $movieType = 'now_showing'; 
     public $selectedMovie = null;
     public $trailerUrl = null;
+    public $search = ''; // 🔍 Search term
 
     public function selectMovie($movieId)
     {
@@ -35,19 +35,27 @@ class MovieList extends Component
 
     public function render()
     {
-        // Now Showing Movies
-        $nowShowing = Movie::where('is_active', true)
+        $query = Movie::where('is_active', true)
+            ->where(function ($q) {
+                $q->whereHas('schedules', function ($query) {
+                    $query->where('is_active', true);
+                });
+            });
+
+        // Apply Search Filter
+        if (!empty($this->search)) {
+            $query->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($this->search) . '%']);
+        }
+
+        $nowShowing = (clone $query)
             ->whereHas('schedules', function ($query) {
-                $query->where('is_active', true)
-                    ->whereDate('release_date', '<=', Carbon::today());
+                $query->whereDate('release_date', '<=', Carbon::today());
             })
             ->get();
 
-        // Upcoming Movies
-        $upcomingMovies = Movie::where('is_active', true)
+        $upcomingMovies = (clone $query)
             ->whereHas('schedules', function ($query) {
-                $query->where('is_active', true)
-                    ->whereDate('release_date', '>', Carbon::today());
+                $query->whereDate('release_date', '>', Carbon::today());
             })
             ->get();
 
