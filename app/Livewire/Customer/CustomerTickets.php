@@ -20,7 +20,7 @@ class CustomerTickets extends Component
     {
         $now = now();
     
-        $this->tickets = Booking::with(['schedule.movie', 'schedule.theatre.cinema', 'seats'])
+        $this->tickets = Booking::with(['schedule.movie', 'schedule.theatre.cinema']) //remove seat
             ->where('user_id', Auth::id())
             ->whereIn('status', ['booked', 'purchased'])
             ->where(function ($query) use ($now) {
@@ -46,12 +46,10 @@ class CustomerTickets extends Component
             $expireTime = null;
 
             if ($ticket->status === 'booked') {
-                // Expire 1 hour before the movie starts
-                $expireTime = Carbon::parse($schedule->start_time)->subHour();
+                $expireTime = Carbon::parse($schedule->date . ' ' . $schedule->start_time)->subHour();
             } elseif ($ticket->status === 'purchased') {
-                // Expire after the movie ends (start_time + duration)
-                $expireTime = Carbon::parse($schedule->start_time)->addMinutes($schedule->duration);
-            }
+                $expireTime = Carbon::parse($schedule->date . ' ' . $schedule->start_time)->addMinutes($schedule->duration);
+            }            // change this part
 
             if ($expireTime && now()->greaterThan($expireTime)) {
                 $ticket->delete();

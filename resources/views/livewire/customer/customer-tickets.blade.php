@@ -4,8 +4,8 @@
     @forelse($tickets as $ticket)
         @php
             $expiryTime = $ticket->status === 'booked' 
-                ? \Carbon\Carbon::parse($ticket->schedule->start_time)->subHour() 
-                : \Carbon\Carbon::parse($ticket->schedule->start_time)->addMinutes($ticket->schedule->duration);
+            ? \Carbon\Carbon::parse($ticket->schedule->date . ' ' . $ticket->schedule->start_time)->subHour() 
+            : \Carbon\Carbon::parse($ticket->schedule->date . ' ' . $ticket->schedule->start_time)->addMinutes($ticket->schedule->duration);
         @endphp
 
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg transition hover:shadow-2xl mb-6 relative border-l-8 border-opacity-70 
@@ -39,13 +39,13 @@
             <!-- Showtime -->
             <p class="text-gray-700 dark:text-gray-300 mt-1">
                 ⏰ <span class="font-medium">Showtime:</span> 
-                {{ \Carbon\Carbon::parse($ticket->schedule->start_time)->format('M d, Y h:i A') }}
+                {{ \Carbon\Carbon::parse($ticket->schedule->date . ' ' . $ticket->schedule->start_time)->format('M d, Y h:i A') }} 
             </p>
 
             <!-- Seats -->
             <p class="text-gray-700 dark:text-gray-300 mt-1">
-                🎟️ <span class="font-medium">Seats:</span> {{ $ticket->seats->pluck('seat_number')->join(', ') }} ({{ ucfirst($ticket->status) }})
-            </p>
+                🎟️ <span class="font-medium">Seats:</span> {{ collect($ticket->seat_numbers)->join(', ') }} ({{ ucfirst($ticket->status) }})
+            </p>            
 
             <!-- Expandable Details -->
             <button class="mt-4 text-blue-500 underline transition hover:text-blue-400 focus:outline-none"

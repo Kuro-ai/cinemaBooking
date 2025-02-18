@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Your App</title>
+    <title>Mingalar</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -22,7 +22,7 @@
         <div class="bg-black bg-opacity-50 w-full max-w-4xl p-6 rounded-xl shadow-2xl">
             <div class="text-center">
                 <div class="flex lg:justify-center lg:col-start-2 mb-4">
-                    <img src="storage/image.png" width="80" height="80" alt="logo" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 -960 960 960"><path fill="white" d="m240-120 240-240 240 240zM80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H680v-80h120v-480H160v480h120v80H160q-33 0-56.5-23.5T80-280m400-200"/></svg>
                 </div>
                 <h1 class="text-3xl font-bold mb-6">Welcome to Mingalar Cinema</h1>
                 <p class="text-lg mb-8">Experience the best of our platform. Join us now and get started!</p>

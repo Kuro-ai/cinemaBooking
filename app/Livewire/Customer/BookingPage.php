@@ -123,7 +123,14 @@ class BookingPage extends Component
                 'booking_code' => strtoupper(Str::random(10)),
                 'total_seats' => count($this->selectedSeats),
                 'total_price' => $totalPrice,
-                'seat_numbers' => json_encode($this->selectedSeats),
+                'seat_numbers' => json_encode(
+                                    ScheduleSeat::whereIn('id', $this->selectedSeats)
+                                        ->with('seat')
+                                        ->get()
+                                        ->pluck('seat.seat_number') 
+                                        ->toArray()
+                                ),
+                                
                 'status' => $type == 'buy' ? 'purchased' : 'booked',
                 'payment_date' => $type == 'buy' ? now() : null,
                 'payment_type' => $type == 'buy' ? $this->paymentMethod : null

@@ -19,9 +19,9 @@
                         {{ $selectedSchedule && $selectedSchedule->id == $schedule->id 
                             ? 'bg-blue-600 text-white border-blue-600' 
                             : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-200 text-gray-900 hover:bg-gray-300 dark:hover:bg-gray-600 border-gray-300 dark:border-gray-500' }}">
-                        {{ \Carbon\Carbon::parse($schedule->release_date)->format('M d, Y h:i A') }}
-                    </button>
-                @endforeach
+                        {{ \Carbon\Carbon::parse($schedule->date . ' ' . $schedule->start_time)->format('M d, Y h:i A') }} <!-- change this part -->
+                    </button> 
+                @endforeach 
             </div>
         </div>
     </div>
