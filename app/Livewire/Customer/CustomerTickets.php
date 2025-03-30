@@ -18,25 +18,11 @@ class CustomerTickets extends Component
 
     public function fetchTickets()
     {
-        $now = now();
-    
-        $this->tickets = Booking::with(['schedule.movie', 'schedule.theatre.cinema']) //remove seat
-            ->where('user_id', Auth::id())
-            ->whereIn('status', ['booked', 'purchased'])
-            ->where(function ($query) use ($now) {
-                $query->whereHas('schedule', function ($q) use ($now) {
-                    $q->whereHas('movie', function ($m) use ($now) {
-                        // Convert "HH:MM" format to minutes
-                        $m->whereRaw("start_time + (EXTRACT(EPOCH FROM (movies.duration::interval)) / 60 || ' minutes')::interval >= ?", [$now]);
-                    });
-                })
-                ->orWhereHas('schedule', function ($q) use ($now) {
-                    // Only include booked tickets if they are still valid (1 hour before showtime)
-                    $q->where('start_time', '>=', $now->addHour());
-                });
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $this->tickets = Booking::with(['schedule.movie', 'schedule.theatre.cinema'])
+        ->where('user_id', Auth::id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+
     }
     
     public function deleteExpiredTickets()

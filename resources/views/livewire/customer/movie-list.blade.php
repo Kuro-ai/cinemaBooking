@@ -95,12 +95,14 @@
                 <p class="mt-4 text-gray-700 dark:text-gray-300">
                     {{ $selectedMovie->description ?? 'This movie does not have a description yet. Please stay tuned for more information!' }}
                 </p>
-                <button 
-                    wire:click="fetchTrailer" 
-                    class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-                >
-                    Watch Trailer
-                </button>
+                <div>
+                    <button 
+                        wire:click="fetchTrailer" 
+                        class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                    >
+                        Watch Trailer
+                    </button>
+                </div>
             </div>
         </div>
 

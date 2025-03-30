@@ -17,7 +17,6 @@ use Laravel\Fortify\Fortify;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
-
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -27,6 +26,7 @@ class FortifyServiceProvider extends ServiceProvider
     {
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\UpdatesUserPasswords::class, UpdateUserPassword::class);
     }
 
     /**

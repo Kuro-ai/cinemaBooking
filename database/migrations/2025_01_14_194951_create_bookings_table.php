@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('payment_type')->nullable();
             $table->timestamp('payment_date')->nullable();     
             $table->text('seat_numbers')->default('[]')->nullable();                        
-            $table->enum('status', ['booked', 'purchased', 'refunded']);
+            $table->enum('status', ['booked', 'purchased', 'refunded', 'confirmed'])->change();
             $table->timestamps();                                                
         });
     }

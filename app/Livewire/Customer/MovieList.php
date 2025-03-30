@@ -20,13 +20,12 @@ class MovieList extends Component
     }
 
     public function fetchTrailer()
-    {
-        if ($this->selectedMovie && $this->selectedMovie->trailer_url) {
-            $this->trailerUrl = $this->selectedMovie->trailer_url;
-        } else {
-            $this->trailerUrl = null;
-        }
+{
+    if ($this->selectedMovie && $this->selectedMovie->trailer_url) {
+        return redirect()->to($this->selectedMovie->trailer_url);
     }
+}
+
 
     public function startBooking($movieId)
     {
